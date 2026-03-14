@@ -21,13 +21,13 @@ const CodeBlock = ({ language, value }: { language: string; value: string }) => 
 
   return (
     <div className="relative my-3 rounded-lg overflow-hidden border border-border">
-      <div className="flex items-center justify-between px-4 py-2 bg-muted/80">
+      <div className="flex items-center justify-between px-4 py-2 bg-muted">
         <span className="text-xs font-mono text-muted-foreground">{language || "code"}</span>
         <button
           onClick={handleCopy}
           className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
-          {copied ? <Check className="h-3.5 w-3.5 text-neon-cyan" /> : <Copy className="h-3.5 w-3.5" />}
+          {copied ? <Check className="h-3.5 w-3.5 text-green-india" /> : <Copy className="h-3.5 w-3.5" />}
           {copied ? "Copied!" : "Copy"}
         </button>
       </div>
@@ -38,7 +38,6 @@ const CodeBlock = ({ language, value }: { language: string; value: string }) => 
         customStyle={{
           margin: 0,
           borderRadius: 0,
-          background: "hsl(230 25% 5%)",
           fontSize: "0.85rem",
         }}
       >
@@ -59,32 +58,30 @@ const ChatMessage = memo(({ message }: ChatMessageProps) => {
       className={`flex gap-3 px-4 py-3 ${isUser ? "justify-end" : "justify-start"}`}
     >
       {!isUser && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-lg glass flex items-center justify-center neon-glow-cyan">
-          <Bot className="h-4 w-4 text-neon-cyan" />
+        <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <Bot className="h-4 w-4 text-saffron" />
         </div>
       )}
 
       <div
         className={`max-w-[75%] rounded-2xl px-4 py-3 ${
           isUser
-            ? "bg-user-bubble text-user-bubble-foreground neon-glow-purple"
-            : "glass text-ai-bubble-foreground"
+            ? "bg-primary text-primary-foreground saffron-glow"
+            : "glass text-foreground"
         }`}
       >
         {isUser ? (
           <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
         ) : (
-          <div className="prose prose-sm prose-invert max-w-none text-ai-bubble-foreground">
+          <div className="prose prose-sm max-w-none text-foreground">
             <ReactMarkdown
               components={{
                 code({ className, children, ...props }) {
                   const match = /language-(\w+)/.exec(className || "");
                   const value = String(children).replace(/\n$/, "");
-                  if (match) {
-                    return <CodeBlock language={match[1]} value={value} />;
-                  }
+                  if (match) return <CodeBlock language={match[1]} value={value} />;
                   return (
-                    <code className="px-1.5 py-0.5 rounded bg-muted font-mono text-xs text-neon-cyan" {...props}>
+                    <code className="px-1.5 py-0.5 rounded bg-muted font-mono text-xs text-primary" {...props}>
                       {children}
                     </code>
                   );
@@ -93,7 +90,7 @@ const ChatMessage = memo(({ message }: ChatMessageProps) => {
                   return <p className="mb-2 last:mb-0 leading-relaxed text-sm">{children}</p>;
                 },
                 strong({ children }) {
-                  return <strong className="font-semibold text-foreground">{children}</strong>;
+                  return <strong className="font-semibold text-navy">{children}</strong>;
                 },
                 ul({ children }) {
                   return <ul className="list-disc pl-4 mb-2 space-y-1 text-sm">{children}</ul>;
@@ -101,9 +98,12 @@ const ChatMessage = memo(({ message }: ChatMessageProps) => {
                 ol({ children }) {
                   return <ol className="list-decimal pl-4 mb-2 space-y-1 text-sm">{children}</ol>;
                 },
-                h1({ children }) { return <h1 className="text-lg font-bold mb-2 neon-text-cyan">{children}</h1>; },
-                h2({ children }) { return <h2 className="text-base font-bold mb-2 neon-text-cyan">{children}</h2>; },
-                h3({ children }) { return <h3 className="text-sm font-bold mb-1 neon-text-cyan">{children}</h3>; },
+                h1({ children }) { return <h1 className="text-lg font-bold mb-2 text-saffron">{children}</h1>; },
+                h2({ children }) { return <h2 className="text-base font-bold mb-2 text-saffron">{children}</h2>; },
+                h3({ children }) { return <h3 className="text-sm font-bold mb-1 text-navy">{children}</h3>; },
+                table({ children }) { return <table className="w-full text-sm border-collapse my-2">{children}</table>; },
+                th({ children }) { return <th className="border border-border px-3 py-1.5 bg-muted text-left font-semibold">{children}</th>; },
+                td({ children }) { return <td className="border border-border px-3 py-1.5">{children}</td>; },
               }}
             >
               {message.content}
@@ -113,8 +113,8 @@ const ChatMessage = memo(({ message }: ChatMessageProps) => {
       </div>
 
       {isUser && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-user-bubble/20 flex items-center justify-center">
-          <User className="h-4 w-4 text-neon-purple" />
+        <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-secondary/20 flex items-center justify-center">
+          <User className="h-4 w-4 text-green-india" />
         </div>
       )}
     </motion.div>
