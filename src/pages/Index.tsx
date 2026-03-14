@@ -1,62 +1,56 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Settings, PanelLeft, Sparkles } from "lucide-react";
+import { PanelLeft, Wheat, Globe } from "lucide-react";
 import { motion } from "framer-motion";
 import ChatMessage from "@/components/ChatMessage";
 import ChatInput from "@/components/ChatInput";
 import ChatSidebar from "@/components/ChatSidebar";
-import SettingsModal from "@/components/SettingsModal";
+import CropCalculator from "@/components/CropCalculator";
 import TypingIndicator from "@/components/TypingIndicator";
 import { sendMessage, generateId, type Message, type ChatSession } from "@/lib/ai-service";
-
-const WELCOME_MESSAGE: Message = {
-  id: "welcome",
-  role: "assistant",
-  content: `# Welcome! 👋
-
-I'm **Jaswant's AI** — your ultimate assistant for coding, science, history, languages, and more.
-
-Try asking me:
-- *"Write a React component for a todo app"*
-- *"Explain quantum computing"*
-- *"Who made you?"*
-
-💡 **Tip:** Open **Settings** (gear icon) to connect your OpenAI or Gemini API key for full AI-powered responses!`,
-  timestamp: new Date(),
-};
+import { UI_TEXT, type Lang } from "@/lib/i18n";
 
 const Index = () => {
+  const [lang, setLang] = useState<Lang>(() =>
+    (localStorage.getItem("bharat-lang") as Lang) || "en"
+  );
+
+  const t = UI_TEXT[lang];
+
+  const makeWelcome = (l: Lang): Message => ({
+    id: "welcome",
+    role: "assistant",
+    content: UI_TEXT[l].welcome,
+    timestamp: new Date(),
+  });
+
   const [sessions, setSessions] = useState<ChatSession[]>(() => {
-    const saved = localStorage.getItem("chat-sessions");
+    const saved = localStorage.getItem("bharat-sessions");
     if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch { /* ignore */ }
+      try { return JSON.parse(saved); } catch { /* ignore */ }
     }
-    const initial: ChatSession = {
+    return [{
       id: generateId(),
-      title: "New Chat",
-      messages: [WELCOME_MESSAGE],
+      title: lang === "en" ? "New Chat" : "नई चैट",
+      messages: [makeWelcome(lang)],
       createdAt: new Date(),
-    };
-    return [initial];
+    }];
   });
 
   const [activeSessionId, setActiveSessionId] = useState<string>(sessions[0]?.id);
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem("ai-api-key") || "");
-  const [provider, setProvider] = useState<"openai" | "gemini">(() =>
-    (localStorage.getItem("ai-provider") as "openai" | "gemini") || "openai"
-  );
+  const [cropCalcOpen, setCropCalcOpen] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-
   const activeSession = sessions.find((s) => s.id === activeSessionId);
 
   useEffect(() => {
-    localStorage.setItem("chat-sessions", JSON.stringify(sessions));
+    localStorage.setItem("bharat-sessions", JSON.stringify(sessions));
   }, [sessions]);
+
+  useEffect(() => {
+    localStorage.setItem("bharat-lang", lang);
+  }, [lang]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -82,17 +76,17 @@ const Index = () => {
       setIsLoading(true);
       try {
         const allMessages = [...activeSession.messages, userMsg].filter((m) => m.id !== "welcome");
-        const response = await sendMessage(allMessages, apiKey || null, provider);
+        const response = await sendMessage(allMessages, lang);
         const aiMsg: Message = { id: generateId(), role: "assistant", content: response, timestamp: new Date() };
 
         setSessions((prev) =>
           prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, aiMsg] } : s))
         );
-      } catch (error) {
+      } catch {
         const errMsg: Message = {
           id: generateId(),
           role: "assistant",
-          content: "⚠️ Something went wrong. Please try again.",
+          content: lang === "en" ? "⚠️ Something went wrong. Please try again." : "⚠️ कुछ गलत हो गया। कृपया पुनः प्रयास करें।",
           timestamp: new Date(),
         };
         setSessions((prev) =>
@@ -102,14 +96,14 @@ const Index = () => {
         setIsLoading(false);
       }
     },
-    [activeSession, activeSessionId, apiKey, provider]
+    [activeSession, activeSessionId, lang]
   );
 
   const handleNewChat = () => {
     const newSession: ChatSession = {
       id: generateId(),
-      title: "New Chat",
-      messages: [WELCOME_MESSAGE],
+      title: lang === "en" ? "New Chat" : "नई चैट",
+      messages: [makeWelcome(lang)],
       createdAt: new Date(),
     };
     setSessions((prev) => [newSession, ...prev]);
@@ -121,47 +115,43 @@ const Index = () => {
     setSessions((prev) => {
       const filtered = prev.filter((s) => s.id !== id);
       if (filtered.length === 0) {
-        const newSession: ChatSession = {
+        const ns: ChatSession = {
           id: generateId(),
-          title: "New Chat",
-          messages: [WELCOME_MESSAGE],
+          title: lang === "en" ? "New Chat" : "नई चैट",
+          messages: [makeWelcome(lang)],
           createdAt: new Date(),
         };
-        setActiveSessionId(newSession.id);
-        return [newSession];
+        setActiveSessionId(ns.id);
+        return [ns];
       }
       if (activeSessionId === id) setActiveSessionId(filtered[0].id);
       return filtered;
     });
   };
 
-  const handleSaveSettings = (key: string, prov: "openai" | "gemini") => {
-    setApiKey(key);
-    setProvider(prov);
-    localStorage.setItem("ai-api-key", key);
-    localStorage.setItem("ai-provider", prov);
-  };
+  const toggleLang = () => setLang((prev) => (prev === "en" ? "hi" : "en"));
 
   return (
     <div className="h-screen flex flex-col bg-background relative overflow-hidden">
-      {/* Background effects */}
+      {/* Subtle background accents */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-neon-cyan/5 blur-[120px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-neon-purple/5 blur-[120px]" />
+        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px]" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-secondary/5 blur-[120px]" />
       </div>
 
       <ChatSidebar
         sessions={sessions}
         activeId={activeSessionId}
-        onSelect={(id) => {
-          setActiveSessionId(id);
-          setSidebarOpen(false);
-        }}
+        onSelect={(id) => { setActiveSessionId(id); setSidebarOpen(false); }}
         onNew={handleNewChat}
         onDelete={handleDeleteSession}
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        lang={lang}
       />
+
+      {/* Tiranga top bar */}
+      <div className="tiranga-bar" />
 
       {/* Header */}
       <header className="relative z-10 flex items-center justify-between px-4 py-3 glass-strong border-b border-border">
@@ -173,19 +163,29 @@ const Index = () => {
             <PanelLeft className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-neon-cyan animate-pulse-glow" />
+            <span className="text-xl">🇮🇳</span>
             <h1 className="font-heading font-bold text-lg">
-              <span className="neon-text-cyan">Jaswant's</span>{" "}
-              <span className="text-foreground">AI</span>
+              <span className="text-saffron">{lang === "en" ? "Bharat" : "भारत"}</span>{" "}
+              <span className="text-navy">AI</span>
             </h1>
           </div>
         </div>
-        <button
-          onClick={() => setSettingsOpen(true)}
-          className="text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <Settings className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setCropCalcOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary/10 text-secondary text-xs font-medium hover:bg-secondary/20 transition-colors"
+          >
+            <Wheat className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">{t.cropCalculator}</span>
+          </button>
+          <button
+            onClick={toggleLang}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
+          >
+            <Globe className="h-3.5 w-3.5" />
+            {lang === "en" ? "हिंदी" : "English"}
+          </button>
+        </div>
       </header>
 
       {/* Messages */}
@@ -200,16 +200,10 @@ const Index = () => {
 
       {/* Input */}
       <div className="relative z-10">
-        <ChatInput onSend={handleSend} disabled={isLoading} />
+        <ChatInput onSend={handleSend} disabled={isLoading} lang={lang} />
       </div>
 
-      <SettingsModal
-        open={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-        apiKey={apiKey}
-        provider={provider}
-        onSave={handleSaveSettings}
-      />
+      <CropCalculator open={cropCalcOpen} onClose={() => setCropCalcOpen(false)} lang={lang} />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { Plus, MessageSquare, Trash2, PanelLeftClose } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { ChatSession } from "@/lib/ai-service";
+import { UI_TEXT, type Lang } from "@/lib/i18n";
 
 interface ChatSidebarProps {
   sessions: ChatSession[];
@@ -10,9 +11,12 @@ interface ChatSidebarProps {
   onDelete: (id: string) => void;
   open: boolean;
   onClose: () => void;
+  lang: Lang;
 }
 
-const ChatSidebar = ({ sessions, activeId, onSelect, onNew, onDelete, open, onClose }: ChatSidebarProps) => {
+const ChatSidebar = ({ sessions, activeId, onSelect, onNew, onDelete, open, onClose, lang }: ChatSidebarProps) => {
+  const t = UI_TEXT[lang];
+
   return (
     <AnimatePresence>
       {open && (
@@ -23,8 +27,9 @@ const ChatSidebar = ({ sessions, activeId, onSelect, onNew, onDelete, open, onCl
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
           className="fixed left-0 top-0 bottom-0 w-[280px] z-50 glass-strong flex flex-col"
         >
+          <div className="tiranga-bar" />
           <div className="flex items-center justify-between p-4 border-b border-border">
-            <h2 className="font-heading font-semibold text-sm neon-text-cyan">Chat History</h2>
+            <h2 className="font-heading font-semibold text-sm text-saffron">{t.chatHistory}</h2>
             <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
               <PanelLeftClose className="h-4 w-4" />
             </button>
@@ -33,10 +38,10 @@ const ChatSidebar = ({ sessions, activeId, onSelect, onNew, onDelete, open, onCl
           <div className="p-3">
             <button
               onClick={onNew}
-              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl border border-dashed border-neon-cyan/30 text-neon-cyan text-sm font-medium hover:bg-muted/30 transition-all"
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl border border-dashed border-primary/30 text-primary text-sm font-medium hover:bg-muted/30 transition-all"
             >
               <Plus className="h-4 w-4" />
-              New Chat
+              {t.newChat}
             </button>
           </div>
 
@@ -47,7 +52,7 @@ const ChatSidebar = ({ sessions, activeId, onSelect, onNew, onDelete, open, onCl
                 layout
                 className={`group flex items-center gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition-all text-sm ${
                   activeId === session.id
-                    ? "bg-muted text-foreground neon-glow-cyan"
+                    ? "bg-primary/10 text-foreground saffron-glow"
                     : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"
                 }`}
                 onClick={() => onSelect(session.id)}
@@ -69,7 +74,7 @@ const ChatSidebar = ({ sessions, activeId, onSelect, onNew, onDelete, open, onCl
 
           <div className="p-4 border-t border-border">
             <p className="text-[10px] text-muted-foreground text-center">
-              Powered by <span className="neon-text-purple font-semibold">Jaswant's AI</span>
+              🇮🇳 <span className="text-saffron font-semibold">{t.poweredBy}</span>
             </p>
           </div>
         </motion.aside>

@@ -1,24 +1,25 @@
 import { useState, useRef, useCallback } from "react";
 import { Send } from "lucide-react";
 import { motion } from "framer-motion";
+import { UI_TEXT, type Lang } from "@/lib/i18n";
 
 interface ChatInputProps {
   onSend: (message: string) => void;
   disabled?: boolean;
+  lang: Lang;
 }
 
-const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
+const ChatInput = ({ onSend, disabled, lang }: ChatInputProps) => {
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const t = UI_TEXT[lang];
 
   const handleSubmit = useCallback(() => {
     const trimmed = input.trim();
     if (!trimmed || disabled) return;
     onSend(trimmed);
     setInput("");
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-    }
+    if (textareaRef.current) textareaRef.current.style.height = "auto";
   }, [input, disabled, onSend]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -39,7 +40,7 @@ const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
     <div className="p-4">
       <div className="max-w-3xl mx-auto">
         <motion.div
-          className="glass-strong rounded-2xl neon-glow-cyan flex items-end gap-2 p-3"
+          className="glass-strong rounded-2xl saffron-glow flex items-end gap-2 p-3"
           whileFocus={{ scale: 1.005 }}
         >
           <textarea
@@ -47,7 +48,7 @@ const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
             value={input}
             onChange={handleInput}
             onKeyDown={handleKeyDown}
-            placeholder="Ask me anything..."
+            placeholder={t.placeholder}
             disabled={disabled}
             rows={1}
             className="flex-1 bg-transparent resize-none outline-none text-sm text-foreground placeholder:text-muted-foreground scrollbar-thin font-body"
@@ -56,13 +57,13 @@ const ChatInput = ({ onSend, disabled }: ChatInputProps) => {
           <button
             onClick={handleSubmit}
             disabled={disabled || !input.trim()}
-            className="flex-shrink-0 w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center transition-all hover:neon-glow-cyan disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex-shrink-0 w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center transition-all hover:saffron-glow disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <Send className="h-4 w-4" />
           </button>
         </motion.div>
         <p className="text-center text-[10px] text-muted-foreground mt-2">
-          Built by Jaswant · Connect API key in Settings for full AI power
+          🇮🇳 {t.poweredBy} · Offline & Fast
         </p>
       </div>
     </div>
