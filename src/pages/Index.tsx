@@ -1,12 +1,15 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { PanelLeft, Wheat, Globe } from "lucide-react";
+import { PanelLeft, Wheat, Globe, Volume2, VolumeX } from "lucide-react";
 import { motion } from "framer-motion";
 import ChatMessage from "@/components/ChatMessage";
 import ChatInput from "@/components/ChatInput";
 import ChatSidebar from "@/components/ChatSidebar";
 import CropCalculator from "@/components/CropCalculator";
 import TypingIndicator from "@/components/TypingIndicator";
+import FloatingControlPanel from "@/components/FloatingControlPanel";
+import SuggestionChips from "@/components/SuggestionChips";
 import { sendMessage, generateId, type Message, type ChatSession } from "@/lib/ai-service";
+import { speakText } from "@/lib/speech";
 import { UI_TEXT, type Lang } from "@/lib/i18n";
 
 const Index = () => {
@@ -15,6 +18,7 @@ const Index = () => {
   );
 
   const t = UI_TEXT[lang];
+  const [ttsEnabled, setTtsEnabled] = useState(false);
 
   const makeWelcome = (l: Lang): Message => ({
     id: "welcome",
@@ -82,11 +86,13 @@ const Index = () => {
         setSessions((prev) =>
           prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, aiMsg] } : s))
         );
+
+        if (ttsEnabled) speakText(response, lang);
       } catch {
         const errMsg: Message = {
           id: generateId(),
           role: "assistant",
-          content: lang === "en" ? "⚠️ Something went wrong. Please try again." : "⚠️ कुछ गलत हो गया। कृपया पुनः प्रयास करें।",
+          content: lang === "en" ? "⚠️ Something went wrong." : "⚠️ कुछ गलत हो गया।",
           timestamp: new Date(),
         };
         setSessions((prev) =>
@@ -96,7 +102,18 @@ const Index = () => {
         setIsLoading(false);
       }
     },
-    [activeSession, activeSessionId, lang]
+    [activeSession, activeSessionId, lang, ttsEnabled]
+  );
+
+  const handleBotMessage = useCallback(
+    (content: string) => {
+      const msg: Message = { id: generateId(), role: "assistant", content, timestamp: new Date() };
+      setSessions((prev) =>
+        prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, msg] } : s))
+      );
+      if (ttsEnabled) speakText(content, lang);
+    },
+    [activeSessionId, lang, ttsEnabled]
   );
 
   const handleNewChat = () => {
@@ -133,7 +150,7 @@ const Index = () => {
 
   return (
     <div className="h-screen flex flex-col bg-background relative overflow-hidden">
-      {/* Subtle background accents */}
+      {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px]" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-secondary/5 blur-[120px]" />
@@ -150,16 +167,12 @@ const Index = () => {
         lang={lang}
       />
 
-      {/* Tiranga top bar */}
       <div className="tiranga-bar" />
 
       {/* Header */}
       <header className="relative z-10 flex items-center justify-between px-4 py-3 glass-strong border-b border-border">
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
+          <button onClick={() => setSidebarOpen(true)} className="text-muted-foreground hover:text-foreground transition-colors">
             <PanelLeft className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2">
@@ -170,20 +183,28 @@ const Index = () => {
             </h1>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setTtsEnabled(!ttsEnabled)}
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+              ttsEnabled ? "bg-secondary/20 text-secondary" : "bg-muted text-muted-foreground"
+            }`}
+          >
+            {ttsEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
+          </button>
           <button
             onClick={() => setCropCalcOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary/10 text-secondary text-xs font-medium hover:bg-secondary/20 transition-colors"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-secondary/10 text-secondary text-xs font-medium hover:bg-secondary/20 transition-colors"
           >
             <Wheat className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">{t.cropCalculator}</span>
           </button>
           <button
             onClick={toggleLang}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
           >
             <Globe className="h-3.5 w-3.5" />
-            {lang === "en" ? "हिंदी" : "English"}
+            {lang === "en" ? "हिंदी" : "EN"}
           </button>
         </div>
       </header>
@@ -198,8 +219,22 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Input */}
-      <div className="relative z-10">
+      {/* Bottom area */}
+      <div className="relative z-10 space-y-2">
+        {/* Suggestion Chips */}
+        <div className="max-w-3xl mx-auto px-4">
+          <SuggestionChips onSelect={handleSend} lang={lang} />
+        </div>
+
+        {/* Floating Control Panel */}
+        <div className="flex justify-center pb-1">
+          <FloatingControlPanel
+            onVoiceResult={handleSend}
+            onLocationDetect={handleBotMessage}
+            lang={lang}
+          />
+        </div>
+
         <ChatInput onSend={handleSend} disabled={isLoading} lang={lang} />
       </div>
 
