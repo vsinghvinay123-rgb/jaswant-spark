@@ -27,15 +27,15 @@ const SUGGESTIONS = {
 
 const SuggestionChips = ({ onSelect, lang }: SuggestionChipsProps) => {
   return (
-    <div className="flex gap-2 overflow-x-auto scrollbar-thin pb-1 px-1">
+    <div className="flex gap-1.5 overflow-x-auto scrollbar-thin pb-1 px-1">
       {SUGGESTIONS[lang].map((s, i) => (
         <motion.button
           key={s}
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.05 }}
+          transition={{ delay: i * 0.04 }}
           onClick={() => onSelect(s)}
-          className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium bg-muted text-muted-foreground hover:bg-primary/15 hover:text-primary transition-all border border-border"
+          className="flex-shrink-0 px-3 py-1 rounded-full text-[10px] font-heading font-semibold tracking-wide bg-muted text-muted-foreground hover:text-primary hover:neon-border-orange transition-all border border-border"
         >
           {s}
         </motion.button>

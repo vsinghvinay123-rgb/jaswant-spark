@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback } from "react";
 import { Send } from "lucide-react";
-import { motion } from "framer-motion";
 import { UI_TEXT, type Lang } from "@/lib/i18n";
 
 interface ChatInputProps {
@@ -33,16 +32,13 @@ const ChatInput = ({ onSend, disabled, lang }: ChatInputProps) => {
     setInput(e.target.value);
     const el = e.target;
     el.style.height = "auto";
-    el.style.height = Math.min(el.scrollHeight, 160) + "px";
+    el.style.height = Math.min(el.scrollHeight, 120) + "px";
   };
 
   return (
-    <div className="p-4">
+    <div className="px-4 py-2">
       <div className="max-w-3xl mx-auto">
-        <motion.div
-          className="glass-strong rounded-2xl saffron-glow flex items-end gap-2 p-3"
-          whileFocus={{ scale: 1.005 }}
-        >
+        <div className="glass-strong rounded-2xl neon-border-orange flex items-end gap-2 p-2.5">
           <textarea
             ref={textareaRef}
             value={input}
@@ -52,19 +48,16 @@ const ChatInput = ({ onSend, disabled, lang }: ChatInputProps) => {
             disabled={disabled}
             rows={1}
             className="flex-1 bg-transparent resize-none outline-none text-sm text-foreground placeholder:text-muted-foreground scrollbar-thin font-body"
-            style={{ maxHeight: 160 }}
+            style={{ maxHeight: 120 }}
           />
           <button
             onClick={handleSubmit}
             disabled={disabled || !input.trim()}
-            className="flex-shrink-0 w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center transition-all hover:saffron-glow disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex-shrink-0 w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center transition-all saffron-glow hover:brightness-110 disabled:opacity-20 disabled:cursor-not-allowed"
           >
             <Send className="h-4 w-4" />
           </button>
-        </motion.div>
-        <p className="text-center text-[10px] text-muted-foreground mt-2">
-          🇮🇳 {t.poweredBy} · Offline & Fast
-        </p>
+        </div>
       </div>
     </div>
   );

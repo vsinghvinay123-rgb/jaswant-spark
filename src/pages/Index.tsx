@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { PanelLeft, Wheat, Globe, Volume2, VolumeX } from "lucide-react";
-import { motion } from "framer-motion";
 import ChatMessage from "@/components/ChatMessage";
 import ChatInput from "@/components/ChatInput";
 import ChatSidebar from "@/components/ChatSidebar";
@@ -63,7 +62,6 @@ const Index = () => {
   const handleSend = useCallback(
     async (content: string) => {
       if (!activeSession) return;
-
       const userMsg: Message = { id: generateId(), role: "user", content, timestamp: new Date() };
 
       setSessions((prev) =>
@@ -86,13 +84,11 @@ const Index = () => {
         setSessions((prev) =>
           prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, aiMsg] } : s))
         );
-
         if (ttsEnabled) speakText(response, lang);
       } catch {
         const errMsg: Message = {
-          id: generateId(),
-          role: "assistant",
-          content: lang === "en" ? "⚠️ Something went wrong." : "⚠️ कुछ गलत हो गया।",
+          id: generateId(), role: "assistant",
+          content: lang === "en" ? "⚠️ Error occurred." : "⚠️ त्रुटि हुई।",
           timestamp: new Date(),
         };
         setSessions((prev) =>
@@ -117,27 +113,22 @@ const Index = () => {
   );
 
   const handleNewChat = () => {
-    const newSession: ChatSession = {
+    const ns: ChatSession = {
       id: generateId(),
       title: lang === "en" ? "New Chat" : "नई चैट",
       messages: [makeWelcome(lang)],
       createdAt: new Date(),
     };
-    setSessions((prev) => [newSession, ...prev]);
-    setActiveSessionId(newSession.id);
+    setSessions((prev) => [ns, ...prev]);
+    setActiveSessionId(ns.id);
     setSidebarOpen(false);
   };
 
   const handleDeleteSession = (id: string) => {
     setSessions((prev) => {
       const filtered = prev.filter((s) => s.id !== id);
-      if (filtered.length === 0) {
-        const ns: ChatSession = {
-          id: generateId(),
-          title: lang === "en" ? "New Chat" : "नई चैट",
-          messages: [makeWelcome(lang)],
-          createdAt: new Date(),
-        };
+      if (!filtered.length) {
+        const ns: ChatSession = { id: generateId(), title: lang === "en" ? "New Chat" : "नई चैट", messages: [makeWelcome(lang)], createdAt: new Date() };
         setActiveSessionId(ns.id);
         return [ns];
       }
@@ -146,65 +137,51 @@ const Index = () => {
     });
   };
 
-  const toggleLang = () => setLang((prev) => (prev === "en" ? "hi" : "en"));
-
   return (
     <div className="h-screen flex flex-col bg-background relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-secondary/5 blur-[120px]" />
-      </div>
+      {/* Grid background */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{ backgroundImage: "linear-gradient(hsl(var(--neon-green)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--neon-green)) 1px, transparent 1px)", backgroundSize: "40px 40px" }}
+      />
+      {/* Glow orbs */}
+      <div className="absolute top-[-15%] left-[-5%] w-[400px] h-[400px] rounded-full bg-primary/8 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-[-15%] right-[-5%] w-[400px] h-[400px] rounded-full bg-secondary/8 blur-[100px] pointer-events-none" />
 
       <ChatSidebar
-        sessions={sessions}
-        activeId={activeSessionId}
+        sessions={sessions} activeId={activeSessionId}
         onSelect={(id) => { setActiveSessionId(id); setSidebarOpen(false); }}
-        onNew={handleNewChat}
-        onDelete={handleDeleteSession}
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        lang={lang}
+        onNew={handleNewChat} onDelete={handleDeleteSession}
+        open={sidebarOpen} onClose={() => setSidebarOpen(false)} lang={lang}
       />
 
       <div className="tiranga-bar" />
 
       {/* Header */}
-      <header className="relative z-10 flex items-center justify-between px-4 py-3 glass-strong border-b border-border">
+      <header className="relative z-10 flex items-center justify-between px-4 py-2.5 glass-strong border-b border-border">
         <div className="flex items-center gap-3">
           <button onClick={() => setSidebarOpen(true)} className="text-muted-foreground hover:text-foreground transition-colors">
             <PanelLeft className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2">
-            <span className="text-xl">🇮🇳</span>
-            <h1 className="font-heading font-bold text-lg">
-              <span className="text-saffron">{lang === "en" ? "Bharat" : "भारत"}</span>{" "}
-              <span className="text-navy">AI</span>
+            <span className="text-lg">🇮🇳</span>
+            <h1 className="font-heading font-bold text-lg tracking-wide">
+              <span className="text-saffron">BHARAT</span>{" "}
+              <span className="text-green-india">AI</span>
             </h1>
           </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <button
-            onClick={() => setTtsEnabled(!ttsEnabled)}
-            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-              ttsEnabled ? "bg-secondary/20 text-secondary" : "bg-muted text-muted-foreground"
-            }`}
-          >
-            {ttsEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
+        <div className="flex items-center gap-1">
+          <button onClick={() => setTtsEnabled(!ttsEnabled)}
+            className={`p-2 rounded-lg text-xs transition-colors ${ttsEnabled ? "bg-secondary/20 text-secondary" : "bg-muted text-muted-foreground"}`}>
+            {ttsEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
           </button>
-          <button
-            onClick={() => setCropCalcOpen(true)}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-secondary/10 text-secondary text-xs font-medium hover:bg-secondary/20 transition-colors"
-          >
-            <Wheat className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">{t.cropCalculator}</span>
+          <button onClick={() => setCropCalcOpen(true)}
+            className="p-2 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors">
+            <Wheat className="h-4 w-4" />
           </button>
-          <button
-            onClick={toggleLang}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
-          >
-            <Globe className="h-3.5 w-3.5" />
-            {lang === "en" ? "हिंदी" : "EN"}
+          <button onClick={() => setLang((p) => (p === "en" ? "hi" : "en"))}
+            className="p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+            <Globe className="h-4 w-4" />
           </button>
         </div>
       </header>
@@ -219,23 +196,22 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Bottom area */}
-      <div className="relative z-10 space-y-2">
-        {/* Suggestion Chips */}
+      {/* Bottom controls */}
+      <div className="relative z-10 space-y-2 pb-1">
         <div className="max-w-3xl mx-auto px-4">
           <SuggestionChips onSelect={handleSend} lang={lang} />
         </div>
-
-        {/* Floating Control Panel */}
-        <div className="flex justify-center pb-1">
-          <FloatingControlPanel
-            onVoiceResult={handleSend}
-            onLocationDetect={handleBotMessage}
-            lang={lang}
-          />
+        <div className="flex justify-center">
+          <FloatingControlPanel onVoiceResult={handleSend} onLocationDetect={handleBotMessage} lang={lang} />
         </div>
-
         <ChatInput onSend={handleSend} disabled={isLoading} lang={lang} />
+      </div>
+
+      {/* Footer */}
+      <div className="relative z-10 text-center py-1">
+        <p className="text-[9px] text-muted-foreground font-heading tracking-widest">
+          🇮🇳 CREATED BY <span className="text-saffron font-bold">JASWANT</span> · OFFLINE & FAST
+        </p>
       </div>
 
       <CropCalculator open={cropCalcOpen} onClose={() => setCropCalcOpen(false)} lang={lang} />

@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['"Poppins"', 'sans-serif'],
-        body: ['"Poppins"', 'sans-serif'],
+        heading: ['"Rajdhani"', 'sans-serif'],
+        body: ['"Space Grotesk"', 'sans-serif'],
         mono: ['monospace'],
       },
       colors: {
