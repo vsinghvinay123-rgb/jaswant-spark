@@ -99,7 +99,7 @@ export async function sendMessage(
     } else {
       const fullPrompt = `${SYSTEM_PROMPT}\n\nUser: ${lastMessage.content}`;
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
