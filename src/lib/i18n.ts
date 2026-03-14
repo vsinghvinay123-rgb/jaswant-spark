@@ -6,53 +6,55 @@ export const UI_TEXT = {
     tagline: "Your Indian Knowledge Assistant",
     chatHistory: "Chat History",
     newChat: "New Chat",
-    placeholder: "Ask me about farming, history, coding, ISRO...",
+    placeholder: "Ask anything — \"5 acre bajra\", \"ISRO\", \"coding\"...",
     poweredBy: "Created by Jaswant",
-    cropCalculator: "Crop Water Calculator",
+    cropCalculator: "Crop Calculator",
     selectCrop: "Select a crop",
     waterSchedule: "Watering Schedule",
     irrigations: "Irrigations",
     waterNeeded: "Water Needed",
     schedule: "Schedule",
     bestRegions: "Best Regions",
-    welcome: `# Namaste! 🙏🇮🇳
+    welcome: `## Namaste! 🙏🇮🇳
 
-I am **Bharat AI**, created by the innovator **Jaswant**.
+I am **Bharat AI**, created by **Jaswant**.
 
-I'm your offline Indian knowledge assistant! Ask me about:
-- 🌾 **Smart Farming** — Crop water schedules
-- 🏛️ **Indian History** — Ancient to modern
-- 🚀 **ISRO** — India's space achievements
-- 💻 **Coding** — Learn in Hinglish!
-- 🇮🇳 **Great Leaders** — From Gandhi to Kalam
+**Capabilities:**
+- 🌾 Agri-Math Engine — type "5 acre bajra" for instant calculation
+- 📷 Fasal Doctor — scan crop leaves
+- 📍 Auto-Location — optimized crop suggestions
+- 🎤 Voice Input — speak your question
+- 📡 60+ GK facts — ISRO, History, Constitution
+- 💻 Coding basics in Hinglish
 
-💡 Try the **Crop Water Calculator** for instant farming info!`,
+**Use the tools below or type your question. Direct answers only.**`,
   },
   hi: {
     appName: "भारत AI",
     tagline: "आपका भारतीय ज्ञान सहायक",
     chatHistory: "चैट इतिहास",
     newChat: "नई चैट",
-    placeholder: "खेती, इतिहास, कोडिंग, ISRO के बारे में पूछें...",
+    placeholder: "कुछ भी पूछें — \"5 एकड़ बाजरा\", \"ISRO\", \"कोडिंग\"...",
     poweredBy: "जसवंत द्वारा निर्मित",
-    cropCalculator: "फसल पानी कैलकुलेटर",
+    cropCalculator: "फसल कैलकुलेटर",
     selectCrop: "फसल चुनें",
     waterSchedule: "सिंचाई अनुसूची",
     irrigations: "सिंचाई",
     waterNeeded: "पानी की आवश्यकता",
     schedule: "अनुसूची",
     bestRegions: "उत्तम क्षेत्र",
-    welcome: `# नमस्ते! 🙏🇮🇳
+    welcome: `## नमस्ते! 🙏🇮🇳
 
-मैं **भारत AI** हूँ, नवप्रवर्तक **जसवंत** द्वारा निर्मित।
+मैं **भारत AI** हूँ, **जसवंत** द्वारा निर्मित।
 
-मैं आपका ऑफ़लाइन भारतीय ज्ञान सहायक हूँ! मुझसे पूछें:
-- 🌾 **स्मार्ट खेती** — फसल पानी अनुसूची
-- 🏛️ **भारतीय इतिहास** — प्राचीन से आधुनिक
-- 🚀 **ISRO** — भारत की अंतरिक्ष उपलब्धियां
-- 💻 **कोडिंग** — हिंग्लिश में सीखें!
-- 🇮🇳 **महान नेता** — गांधी से कलाम तक
+**क्षमताएं:**
+- 🌾 एग्री-मैथ इंजन — "5 एकड़ बाजरा" टाइप करें तुरंत गणना के लिए
+- 📷 फसल डॉक्टर — फसल की पत्तियां स्कैन करें
+- 📍 ऑटो-लोकेशन — अनुकूलित फसल सुझाव
+- 🎤 वॉइस इनपुट — अपना सवाल बोलें
+- 📡 60+ GK तथ्य — ISRO, इतिहास, संविधान
+- 💻 हिंग्लिश में कोडिंग बेसिक्स
 
-💡 तुरंत खेती की जानकारी के लिए **फसल पानी कैलकुलेटर** आज़माएं!`,
+**नीचे के टूल्स इस्तेमाल करें या सवाल टाइप करें। सीधे जवाब।**`,
   },
 } as const;
