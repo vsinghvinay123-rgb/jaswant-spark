@@ -56,7 +56,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [cropCalcOpen, setCropCalcOpen] = useState(false);
-
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const activeSession = sessions.find((s) => s.id === activeSessionId);
 
