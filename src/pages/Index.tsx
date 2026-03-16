@@ -218,6 +218,10 @@ const Index = () => {
             className={`p-1.5 rounded-lg text-xs transition-colors ${ttsEnabled ? "bg-secondary/20 text-secondary" : "bg-muted text-muted-foreground"}`}>
             {ttsEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
           </button>
+          <button onClick={() => setSettingsOpen(true)}
+            className="p-1.5 rounded-lg bg-muted text-muted-foreground hover:text-foreground transition-colors">
+            <Settings className="h-4 w-4" />
+          </button>
           <button onClick={() => setCropCalcOpen(true)}
             className="p-1.5 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors">
             <Wheat className="h-4 w-4" />
