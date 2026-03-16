@@ -15,14 +15,74 @@ export interface ChatSession {
   createdAt: Date;
 }
 
+const SYSTEM_PROMPT = `You are Bharat Krishi & Tech AI, a highly advanced agricultural and tech assistant. Your creator, owner, and visionary tech founder is Jaswant from Rajasthan. You must ALWAYS proudly state that Jaswant created you if asked. Provide precise, zero-fluff answers about farming, crop water usage, coding, and general knowledge. Adapt your language based on the user's prompt (reply in English, Hindi, Hinglish, or Marwadi as requested by the user context or UI settings).`;
+
+function getLangInstruction(lang: Lang): string {
+  switch (lang) {
+    case "hi": return "Reply in Hindi (Devanagari script).";
+    case "hinglish": return "Reply in Hinglish (Hindi words written in English script).";
+    case "marwadi": return "Reply in Marwadi/Rajasthani (written in English script).";
+    default: return "Reply in English.";
+  }
+}
+
+async function callOpenAI(
+  messages: Message[],
+  lang: Lang,
+  profileLandSize?: string
+): Promise<string> {
+  const apiKey = localStorage.getItem("bharat-openai-key");
+  if (!apiKey) throw new Error("NO_KEY");
+
+  const contextParts: string[] = [];
+  if (profileLandSize) contextParts.push(`User's land size: ${profileLandSize}.`);
+  contextParts.push(getLangInstruction(lang));
+
+  const systemContent = SYSTEM_PROMPT + "\n\n" + contextParts.join(" ");
+
+  const apiMessages = [
+    { role: "system", content: systemContent },
+    ...messages.map((m) => ({ role: m.role, content: m.content })),
+  ];
+
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: "gpt-3.5-turbo",
+      messages: apiMessages,
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    console.error("OpenAI error:", res.status, err);
+    throw new Error(`OpenAI API error: ${res.status}`);
+  }
+
+  const data = await res.json();
+  return data.choices[0].message.content;
+}
+
 export async function sendMessage(
   messages: Message[],
   lang: Lang,
   profileLandSize?: string
 ): Promise<string> {
-  const lastMessage = messages[messages.length - 1];
-  await new Promise(r => setTimeout(r, 400 + Math.random() * 600));
-  return searchKnowledge(lastMessage.content, lang, profileLandSize);
+  try {
+    return await callOpenAI(messages, lang, profileLandSize);
+  } catch (e: any) {
+    if (e.message === "NO_KEY") {
+      // Fallback to offline
+      const lastMessage = messages[messages.length - 1];
+      await new Promise((r) => setTimeout(r, 400 + Math.random() * 600));
+      return searchKnowledge(lastMessage.content, lang, profileLandSize);
+    }
+    throw e;
+  }
 }
 
 export function generateId(): string {

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { PanelLeft, Wheat, Volume2, VolumeX, Tractor } from "lucide-react";
+import { PanelLeft, Wheat, Volume2, VolumeX, Tractor, Settings } from "lucide-react";
 import ChatMessage from "@/components/ChatMessage";
 import ChatInput from "@/components/ChatInput";
 import ChatSidebar from "@/components/ChatSidebar";
@@ -10,6 +10,7 @@ import SuggestionChips from "@/components/SuggestionChips";
 import SplashScreen from "@/components/SplashScreen";
 import ProfileSetupModal from "@/components/ProfileSetupModal";
 import type { UserProfile } from "@/components/ProfileSetupModal";
+import ApiKeyModal from "@/components/ApiKeyModal";
 import { sendMessage, generateId, type Message, type ChatSession } from "@/lib/ai-service";
 import { speakText } from "@/lib/speech";
 import { UI_TEXT, LANG_OPTIONS, type Lang } from "@/lib/i18n";
@@ -55,7 +56,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [cropCalcOpen, setCropCalcOpen] = useState(false);
-
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const activeSession = sessions.find((s) => s.id === activeSessionId);
 
@@ -217,6 +218,10 @@ const Index = () => {
             className={`p-1.5 rounded-lg text-xs transition-colors ${ttsEnabled ? "bg-secondary/20 text-secondary" : "bg-muted text-muted-foreground"}`}>
             {ttsEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
           </button>
+          <button onClick={() => setSettingsOpen(true)}
+            className="p-1.5 rounded-lg bg-muted text-muted-foreground hover:text-foreground transition-colors">
+            <Settings className="h-4 w-4" />
+          </button>
           <button onClick={() => setCropCalcOpen(true)}
             className="p-1.5 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors">
             <Wheat className="h-4 w-4" />
@@ -265,6 +270,7 @@ const Index = () => {
 
       <CropCalculator open={cropCalcOpen} onClose={() => setCropCalcOpen(false)} lang={lang} />
       <ProfileSetupModal open={showOnboarding} onSave={handleProfileSave} currentLang={lang} />
+      <ApiKeyModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   );
 };
