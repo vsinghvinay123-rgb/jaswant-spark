@@ -1,4 +1,5 @@
 import { searchKnowledge } from "./bharat-knowledge";
+import type { Lang } from "./i18n";
 
 export interface Message {
   id: string;
@@ -16,14 +17,12 @@ export interface ChatSession {
 
 export async function sendMessage(
   messages: Message[],
-  lang: "en" | "hi"
+  lang: Lang,
+  profileLandSize?: string
 ): Promise<string> {
   const lastMessage = messages[messages.length - 1];
-
-  // Simulate brief processing time
   await new Promise(r => setTimeout(r, 400 + Math.random() * 600));
-
-  return searchKnowledge(lastMessage.content, lang);
+  return searchKnowledge(lastMessage.content, lang, profileLandSize);
 }
 
 export function generateId(): string {
