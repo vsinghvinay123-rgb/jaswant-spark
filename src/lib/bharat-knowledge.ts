@@ -171,11 +171,15 @@ function parseLandArea(query: string): { acres: number; unit: string } | null {
   return { acres, unit: match[2] };
 }
 
-function generateAgriCalc(query: string, lang: "en" | "hi"): string | null {
+function getLangKey(lang: string): "en" | "hi" {
+  return (lang === "hi" || lang === "marwadi") ? "hi" : "en";
+}
+
+function generateAgriCalc(query: string, lang: string): string | null {
+  const lk = getLangKey(lang);
   const land = parseLandArea(query);
   const crop = findCropFromQuery(query);
 
-  // If user asks "X acre mein kaunsi crop" without specifying crop
   if (land && !crop) {
     const a = land.acres;
     const dryLand = a <= 10;
@@ -186,29 +190,27 @@ function generateAgriCalc(query: string, lang: "en" | "hi"): string | null {
     const lines = recCrops.map((c, i) => {
       const water = Math.round(a * c.waterPerAcre);
       const seed = Math.round(a * c.seedRatePerAcre * 10) / 10;
-      return lang === "en"
+      return lk === "en"
         ? `${i + 1}. **${c.nameEn}**: Water = ${water} m³ | Seed = ${seed} kg | ${c.irrigations}`
         : `${i + 1}. **${c.nameHi}**: पानी = ${water} m³ | बीज = ${seed} kg | ${c.irrigationsHi}`;
     });
 
-    return lang === "en"
+    return lk === "en"
       ? `## 📊 ${land.acres.toFixed(1)} Acre Land Analysis\n\n${dryLand ? "**Region Type**: Dry/Semi-arid → Low water crops recommended\n\n" : ""}${lines.join("\n")}\n\n✅ **Calculation complete.**`
       : `## 📊 ${land.acres.toFixed(1)} एकड़ ज़मीन विश्लेषण\n\n${dryLand ? "**क्षेत्र प्रकार**: शुष्क → कम पानी वाली फसलें अनुशंसित\n\n" : ""}${lines.join("\n")}\n\n✅ **गणना पूर्ण।**`;
   }
 
-  // If user specifies both land and crop
   if (land && crop) {
     const a = land.acres;
     const water = Math.round(a * crop.waterPerAcre);
     const seed = Math.round(a * crop.seedRatePerAcre * 10) / 10;
-    return lang === "en"
+    return lk === "en"
       ? `## 📊 ${crop.nameEn} — ${a.toFixed(1)} Acre Calculation\n\n- **Total Water**: ${water} cubic meters\n- **Irrigations**: ${crop.irrigations}\n- **Seed Required**: ${seed} kg\n- **Rainfall Needed**: ${crop.rainfallNeeded}\n- **Schedule**: ${crop.schedule}\n- **Best Regions**: ${crop.bestFor}\n\n✅ **Calculation complete.**`
       : `## 📊 ${crop.nameHi} — ${a.toFixed(1)} एकड़ गणना\n\n- **कुल पानी**: ${water} क्यूबिक मीटर\n- **सिंचाई**: ${crop.irrigationsHi}\n- **बीज आवश्यक**: ${seed} kg\n- **वर्षा आवश्यक**: ${crop.rainfallNeeded}\n- **अनुसूची**: ${crop.scheduleHi}\n- **उत्तम क्षेत्र**: ${crop.bestForHi}\n\n✅ **गणना पूर्ण।**`;
   }
 
-  // If only crop name, no land area
   if (crop && !land) {
-    return lang === "en"
+    return lk === "en"
       ? `## 🌾 ${crop.nameEn}\n\n| Detail | Info |\n|---|---|\n| **Water/Acre** | ${crop.waterPerAcre} m³ |\n| **Irrigations** | ${crop.irrigations} |\n| **Seed Rate/Acre** | ${crop.seedRatePerAcre} kg |\n| **Rainfall** | ${crop.rainfallNeeded} |\n| **Schedule** | ${crop.schedule} |\n| **Best Regions** | ${crop.bestFor} |\n\n💡 *Specify acres for exact calculation, e.g. "5 acre bajra"*`
       : `## 🌾 ${crop.nameHi}\n\n| विवरण | जानकारी |\n|---|---|\n| **पानी/एकड़** | ${crop.waterPerAcre} m³ |\n| **सिंचाई** | ${crop.irrigationsHi} |\n| **बीज दर/एकड़** | ${crop.seedRatePerAcre} kg |\n| **वर्षा** | ${crop.rainfallNeeded} |\n| **अनुसूची** | ${crop.scheduleHi} |\n| **उत्तम क्षेत्र** | ${crop.bestForHi} |\n\n💡 *सटीक गणना के लिए एकड़ बताएं, जैसे "5 acre बाजरा"*`;
   }
