@@ -10,6 +10,7 @@ import SuggestionChips from "@/components/SuggestionChips";
 import SplashScreen from "@/components/SplashScreen";
 import ProfileSetupModal from "@/components/ProfileSetupModal";
 import type { UserProfile } from "@/components/ProfileSetupModal";
+import ApiKeyModal from "@/components/ApiKeyModal";
 import { sendMessage, generateId, type Message, type ChatSession } from "@/lib/ai-service";
 import { speakText } from "@/lib/speech";
 import { UI_TEXT, LANG_OPTIONS, type Lang } from "@/lib/i18n";
