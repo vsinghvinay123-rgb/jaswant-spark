@@ -34,7 +34,7 @@ const FloatingControlPanel = ({ onVoiceResult, onLocationDetect, lang }: Floatin
     }
 
     const recognition = new SpeechRecognition();
-    recognition.lang = lang === "hi" ? "hi-IN" : "en-IN";
+    recognition.lang = (lang === "hi" || lang === "marwadi") ? "hi-IN" : "en-IN";
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
     recognition.onresult = (event: any) => {

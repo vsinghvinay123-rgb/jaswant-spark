@@ -6,23 +6,11 @@ interface SuggestionChipsProps {
   lang: Lang;
 }
 
-const SUGGESTIONS = {
-  en: [
-    "5 acre Bajra",
-    "ISRO GK",
-    "Who made you?",
-    "10 acre Wheat",
-    "Chandrayaan",
-    "Coding basics",
-  ],
-  hi: [
-    "5 एकड़ बाजरा",
-    "ISRO GK",
-    "तुम्हें किसने बनाया?",
-    "10 एकड़ गेहूं",
-    "चंद्रयान",
-    "कोडिंग बेसिक्स",
-  ],
+const SUGGESTIONS: Record<Lang, string[]> = {
+  en: ["5 acre Bajra", "ISRO GK", "Who made you?", "10 acre Wheat", "Chandrayaan", "Coding basics"],
+  hi: ["5 एकड़ बाजरा", "ISRO GK", "तुम्हें किसने बनाया?", "10 एकड़ गेहूं", "चंद्रयान", "कोडिंग बेसिक्स"],
+  hinglish: ["5 acre Bajra", "ISRO GK", "Tumhe kisne banaya?", "10 acre Wheat", "Chandrayaan", "Coding basics"],
+  marwadi: ["5 एकड़ बाजरा", "ISRO GK", "थनै कुण बनायो?", "10 एकड़ गेहूं", "चंद्रयान", "कोडिंग बेसिक्स"],
 };
 
 const SuggestionChips = ({ onSelect, lang }: SuggestionChipsProps) => {

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { PanelLeft, Wheat, Globe, Volume2, VolumeX } from "lucide-react";
+import { PanelLeft, Wheat, Volume2, VolumeX, Tractor } from "lucide-react";
 import ChatMessage from "@/components/ChatMessage";
 import ChatInput from "@/components/ChatInput";
 import ChatSidebar from "@/components/ChatSidebar";
@@ -7,13 +7,25 @@ import CropCalculator from "@/components/CropCalculator";
 import TypingIndicator from "@/components/TypingIndicator";
 import FloatingControlPanel from "@/components/FloatingControlPanel";
 import SuggestionChips from "@/components/SuggestionChips";
+import SplashScreen from "@/components/SplashScreen";
+import ProfileSetupModal from "@/components/ProfileSetupModal";
+import type { UserProfile } from "@/components/ProfileSetupModal";
 import { sendMessage, generateId, type Message, type ChatSession } from "@/lib/ai-service";
 import { speakText } from "@/lib/speech";
-import { UI_TEXT, type Lang } from "@/lib/i18n";
+import { UI_TEXT, LANG_OPTIONS, type Lang } from "@/lib/i18n";
 
 const Index = () => {
+  const [showSplash, setShowSplash] = useState(() => !sessionStorage.getItem("bharat-splash-done"));
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  const [profile, setProfile] = useState<UserProfile | null>(() => {
+    const saved = localStorage.getItem("bharat-profile");
+    if (saved) try { return JSON.parse(saved); } catch { /* */ }
+    return null;
+  });
+
   const [lang, setLang] = useState<Lang>(() =>
-    (localStorage.getItem("bharat-lang") as Lang) || "en"
+    profile?.lang || (localStorage.getItem("bharat-lang") as Lang) || "en"
   );
 
   const t = UI_TEXT[lang];
@@ -33,7 +45,7 @@ const Index = () => {
     }
     return [{
       id: generateId(),
-      title: lang === "en" ? "New Chat" : "नई चैट",
+      title: lang === "en" || lang === "hinglish" ? "New Chat" : "नई चैट",
       messages: [makeWelcome(lang)],
       createdAt: new Date(),
     }];
@@ -59,6 +71,20 @@ const Index = () => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [activeSession?.messages, isLoading]);
 
+  const handleSplashComplete = useCallback(() => {
+    sessionStorage.setItem("bharat-splash-done", "true");
+    setShowSplash(false);
+    if (!localStorage.getItem("bharat-onboarded")) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  const handleProfileSave = useCallback((p: UserProfile) => {
+    setProfile(p);
+    setLang(p.lang);
+    setShowOnboarding(false);
+  }, []);
+
   const handleSend = useCallback(
     async (content: string) => {
       if (!activeSession) return;
@@ -78,7 +104,7 @@ const Index = () => {
       setIsLoading(true);
       try {
         const allMessages = [...activeSession.messages, userMsg].filter((m) => m.id !== "welcome");
-        const response = await sendMessage(allMessages, lang);
+        const response = await sendMessage(allMessages, lang, profile?.landSize);
         const aiMsg: Message = { id: generateId(), role: "assistant", content: response, timestamp: new Date() };
 
         setSessions((prev) =>
@@ -88,7 +114,7 @@ const Index = () => {
       } catch {
         const errMsg: Message = {
           id: generateId(), role: "assistant",
-          content: lang === "en" ? "⚠️ Error occurred." : "⚠️ त्रुटि हुई।",
+          content: lang === "en" || lang === "hinglish" ? "⚠️ Error occurred." : "⚠️ त्रुटि हुई।",
           timestamp: new Date(),
         };
         setSessions((prev) =>
@@ -98,7 +124,7 @@ const Index = () => {
         setIsLoading(false);
       }
     },
-    [activeSession, activeSessionId, lang, ttsEnabled]
+    [activeSession, activeSessionId, lang, ttsEnabled, profile]
   );
 
   const handleBotMessage = useCallback(
@@ -115,7 +141,7 @@ const Index = () => {
   const handleNewChat = () => {
     const ns: ChatSession = {
       id: generateId(),
-      title: lang === "en" ? "New Chat" : "नई चैट",
+      title: lang === "en" || lang === "hinglish" ? "New Chat" : "नई चैट",
       messages: [makeWelcome(lang)],
       createdAt: new Date(),
     };
@@ -128,7 +154,7 @@ const Index = () => {
     setSessions((prev) => {
       const filtered = prev.filter((s) => s.id !== id);
       if (!filtered.length) {
-        const ns: ChatSession = { id: generateId(), title: lang === "en" ? "New Chat" : "नई चैट", messages: [makeWelcome(lang)], createdAt: new Date() };
+        const ns: ChatSession = { id: generateId(), title: lang === "en" || lang === "hinglish" ? "New Chat" : "नई चैट", messages: [makeWelcome(lang)], createdAt: new Date() };
         setActiveSessionId(ns.id);
         return [ns];
       }
@@ -137,13 +163,16 @@ const Index = () => {
     });
   };
 
+  if (showSplash) {
+    return <SplashScreen onComplete={handleSplashComplete} />;
+  }
+
   return (
     <div className="h-screen flex flex-col bg-background relative overflow-hidden">
       {/* Grid background */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{ backgroundImage: "linear-gradient(hsl(var(--neon-green)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--neon-green)) 1px, transparent 1px)", backgroundSize: "40px 40px" }}
       />
-      {/* Glow orbs */}
       <div className="absolute top-[-15%] left-[-5%] w-[400px] h-[400px] rounded-full bg-primary/8 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-[-15%] right-[-5%] w-[400px] h-[400px] rounded-full bg-secondary/8 blur-[100px] pointer-events-none" />
 
@@ -157,32 +186,52 @@ const Index = () => {
       <div className="tiranga-bar" />
 
       {/* Header */}
-      <header className="relative z-10 flex items-center justify-between px-4 py-2.5 glass-strong border-b border-border">
-        <div className="flex items-center gap-3">
+      <header className="relative z-10 flex items-center justify-between px-3 py-2 glass-strong border-b border-border">
+        <div className="flex items-center gap-2">
           <button onClick={() => setSidebarOpen(true)} className="text-muted-foreground hover:text-foreground transition-colors">
             <PanelLeft className="h-5 w-5" />
           </button>
-          <div className="flex items-center gap-2">
-            <span className="text-lg">🇮🇳</span>
-            <h1 className="font-heading font-bold text-lg tracking-wide">
-              <span className="text-saffron">BHARAT</span>{" "}
-              <span className="text-green-india">AI</span>
-            </h1>
-          </div>
+          <span className="text-lg">🇮🇳</span>
+          <h1 className="font-heading font-bold text-base tracking-wide">
+            <span className="text-saffron">BHARAT</span>{" "}
+            <span className="text-green-india">AI</span>
+          </h1>
+
+          {/* Profile Badge */}
+          {profile && (
+            <div className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-full bg-muted border border-border text-[9px] font-heading text-muted-foreground">
+              <Tractor className="h-3 w-3 text-saffron" />
+              <span>{profile.landSize || "5 Acre"}</span>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-1">
+          {/* Profile Badge mobile */}
+          {profile && (
+            <div className="sm:hidden flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-muted border border-border text-[8px] font-heading text-muted-foreground mr-1">
+              <Tractor className="h-2.5 w-2.5 text-saffron" />
+              <span>{profile.landSize || "5A"}</span>
+            </div>
+          )}
           <button onClick={() => setTtsEnabled(!ttsEnabled)}
-            className={`p-2 rounded-lg text-xs transition-colors ${ttsEnabled ? "bg-secondary/20 text-secondary" : "bg-muted text-muted-foreground"}`}>
+            className={`p-1.5 rounded-lg text-xs transition-colors ${ttsEnabled ? "bg-secondary/20 text-secondary" : "bg-muted text-muted-foreground"}`}>
             {ttsEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
           </button>
           <button onClick={() => setCropCalcOpen(true)}
-            className="p-2 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors">
+            className="p-1.5 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors">
             <Wheat className="h-4 w-4" />
           </button>
-          <button onClick={() => setLang((p) => (p === "en" ? "hi" : "en"))}
-            className="p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
-            <Globe className="h-4 w-4" />
-          </button>
+          {/* Language dropdown */}
+          <select
+            value={lang}
+            onChange={(e) => setLang(e.target.value as Lang)}
+            className="px-2 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-heading font-semibold border-none outline-none cursor-pointer"
+            style={{ background: "hsl(var(--primary) / 0.1)" }}
+          >
+            {LANG_OPTIONS.map((l) => (
+              <option key={l.value} value={l.value} className="bg-card text-foreground">{l.label}</option>
+            ))}
+          </select>
         </div>
       </header>
 
@@ -190,7 +239,7 @@ const Index = () => {
       <div ref={scrollRef} className="relative z-10 flex-1 overflow-y-auto scrollbar-thin">
         <div className="max-w-3xl mx-auto py-4">
           {activeSession?.messages.map((msg) => (
-            <ChatMessage key={msg.id} message={msg} />
+            <ChatMessage key={msg.id} message={msg} lang={lang} />
           ))}
           {isLoading && <TypingIndicator />}
         </div>
@@ -215,6 +264,7 @@ const Index = () => {
       </div>
 
       <CropCalculator open={cropCalcOpen} onClose={() => setCropCalcOpen(false)} lang={lang} />
+      <ProfileSetupModal open={showOnboarding} onSave={handleProfileSave} currentLang={lang} />
     </div>
   );
 };

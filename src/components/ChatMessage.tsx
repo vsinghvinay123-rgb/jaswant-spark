@@ -4,10 +4,13 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Copy, Check, Bot, User } from "lucide-react";
 import { motion } from "framer-motion";
+import WhatsAppShare from "./WhatsAppShare";
 import type { Message } from "@/lib/ai-service";
+import type { Lang } from "@/lib/i18n";
 
 interface ChatMessageProps {
   message: Message;
+  lang: Lang;
 }
 
 const CodeBlock = ({ language, value }: { language: string; value: string }) => {
@@ -35,8 +38,12 @@ const CodeBlock = ({ language, value }: { language: string; value: string }) => 
   );
 };
 
-const ChatMessage = memo(({ message }: ChatMessageProps) => {
+const isDetailedResponse = (content: string) =>
+  content.includes("##") || content.includes("**") || content.length > 200;
+
+const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
   const isUser = message.role === "user";
+  const showWhatsApp = !isUser && message.id !== "welcome" && isDetailedResponse(message.content);
 
   return (
     <motion.div
@@ -51,43 +58,46 @@ const ChatMessage = memo(({ message }: ChatMessageProps) => {
         </div>
       )}
 
-      <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-        isUser
-          ? "bg-primary/20 text-foreground neon-border-orange"
-          : "glass text-foreground"
-      }`}>
-        {isUser ? (
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
-        ) : (
-          <div className="prose prose-sm prose-invert max-w-none text-foreground">
-            <ReactMarkdown
-              components={{
-                code({ className, children, ...props }) {
-                  const match = /language-(\w+)/.exec(className || "");
-                  const value = String(children).replace(/\n$/, "");
-                  if (match) return <CodeBlock language={match[1]} value={value} />;
-                  return (
-                    <code className="px-1.5 py-0.5 rounded bg-muted font-mono text-xs text-primary" {...props}>
-                      {children}
-                    </code>
-                  );
-                },
-                p({ children }) { return <p className="mb-2 last:mb-0 leading-relaxed text-sm">{children}</p>; },
-                strong({ children }) { return <strong className="font-semibold text-saffron">{children}</strong>; },
-                ul({ children }) { return <ul className="list-disc pl-4 mb-2 space-y-1 text-sm">{children}</ul>; },
-                ol({ children }) { return <ol className="list-decimal pl-4 mb-2 space-y-1 text-sm">{children}</ol>; },
-                h1({ children }) { return <h1 className="text-lg font-bold mb-2 text-saffron font-heading">{children}</h1>; },
-                h2({ children }) { return <h2 className="text-base font-bold mb-2 text-saffron font-heading">{children}</h2>; },
-                h3({ children }) { return <h3 className="text-sm font-bold mb-1 text-green-india font-heading">{children}</h3>; },
-                table({ children }) { return <table className="w-full text-sm border-collapse my-2">{children}</table>; },
-                th({ children }) { return <th className="border border-border px-3 py-1.5 bg-muted text-left font-semibold text-saffron">{children}</th>; },
-                td({ children }) { return <td className="border border-border px-3 py-1.5">{children}</td>; },
-              }}
-            >
-              {message.content}
-            </ReactMarkdown>
-          </div>
-        )}
+      <div className={`max-w-[80%] ${isUser ? "" : ""}`}>
+        <div className={`rounded-2xl px-4 py-3 ${
+          isUser
+            ? "bg-primary/20 text-foreground neon-border-orange"
+            : "glass text-foreground"
+        }`}>
+          {isUser ? (
+            <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          ) : (
+            <div className="prose prose-sm prose-invert max-w-none text-foreground">
+              <ReactMarkdown
+                components={{
+                  code({ className, children, ...props }) {
+                    const match = /language-(\w+)/.exec(className || "");
+                    const value = String(children).replace(/\n$/, "");
+                    if (match) return <CodeBlock language={match[1]} value={value} />;
+                    return (
+                      <code className="px-1.5 py-0.5 rounded bg-muted font-mono text-xs text-primary" {...props}>
+                        {children}
+                      </code>
+                    );
+                  },
+                  p({ children }) { return <p className="mb-2 last:mb-0 leading-relaxed text-sm">{children}</p>; },
+                  strong({ children }) { return <strong className="font-semibold text-saffron">{children}</strong>; },
+                  ul({ children }) { return <ul className="list-disc pl-4 mb-2 space-y-1 text-sm">{children}</ul>; },
+                  ol({ children }) { return <ol className="list-decimal pl-4 mb-2 space-y-1 text-sm">{children}</ol>; },
+                  h1({ children }) { return <h1 className="text-lg font-bold mb-2 text-saffron font-heading">{children}</h1>; },
+                  h2({ children }) { return <h2 className="text-base font-bold mb-2 text-saffron font-heading">{children}</h2>; },
+                  h3({ children }) { return <h3 className="text-sm font-bold mb-1 text-green-india font-heading">{children}</h3>; },
+                  table({ children }) { return <table className="w-full text-sm border-collapse my-2">{children}</table>; },
+                  th({ children }) { return <th className="border border-border px-3 py-1.5 bg-muted text-left font-semibold text-saffron">{children}</th>; },
+                  td({ children }) { return <td className="border border-border px-3 py-1.5">{children}</td>; },
+                }}
+              >
+                {message.content}
+              </ReactMarkdown>
+            </div>
+          )}
+        </div>
+        {showWhatsApp && <WhatsAppShare text={message.content} lang={lang} />}
       </div>
 
       {isUser && (
