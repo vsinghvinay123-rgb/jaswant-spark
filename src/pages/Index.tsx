@@ -270,6 +270,7 @@ const Index = () => {
 
       <CropCalculator open={cropCalcOpen} onClose={() => setCropCalcOpen(false)} lang={lang} />
       <ProfileSetupModal open={showOnboarding} onSave={handleProfileSave} currentLang={lang} />
+      <ApiKeyModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   );
 };
