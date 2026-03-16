@@ -171,11 +171,15 @@ function parseLandArea(query: string): { acres: number; unit: string } | null {
   return { acres, unit: match[2] };
 }
 
-function generateAgriCalc(query: string, lang: "en" | "hi"): string | null {
+function getLangKey(lang: string): "en" | "hi" {
+  return (lang === "hi" || lang === "marwadi") ? "hi" : "en";
+}
+
+function generateAgriCalc(query: string, lang: string): string | null {
+  const lk = getLangKey(lang);
   const land = parseLandArea(query);
   const crop = findCropFromQuery(query);
 
-  // If user asks "X acre mein kaunsi crop" without specifying crop
   if (land && !crop) {
     const a = land.acres;
     const dryLand = a <= 10;
@@ -186,29 +190,27 @@ function generateAgriCalc(query: string, lang: "en" | "hi"): string | null {
     const lines = recCrops.map((c, i) => {
       const water = Math.round(a * c.waterPerAcre);
       const seed = Math.round(a * c.seedRatePerAcre * 10) / 10;
-      return lang === "en"
+      return lk === "en"
         ? `${i + 1}. **${c.nameEn}**: Water = ${water} m³ | Seed = ${seed} kg | ${c.irrigations}`
         : `${i + 1}. **${c.nameHi}**: पानी = ${water} m³ | बीज = ${seed} kg | ${c.irrigationsHi}`;
     });
 
-    return lang === "en"
+    return lk === "en"
       ? `## 📊 ${land.acres.toFixed(1)} Acre Land Analysis\n\n${dryLand ? "**Region Type**: Dry/Semi-arid → Low water crops recommended\n\n" : ""}${lines.join("\n")}\n\n✅ **Calculation complete.**`
       : `## 📊 ${land.acres.toFixed(1)} एकड़ ज़मीन विश्लेषण\n\n${dryLand ? "**क्षेत्र प्रकार**: शुष्क → कम पानी वाली फसलें अनुशंसित\n\n" : ""}${lines.join("\n")}\n\n✅ **गणना पूर्ण।**`;
   }
 
-  // If user specifies both land and crop
   if (land && crop) {
     const a = land.acres;
     const water = Math.round(a * crop.waterPerAcre);
     const seed = Math.round(a * crop.seedRatePerAcre * 10) / 10;
-    return lang === "en"
+    return lk === "en"
       ? `## 📊 ${crop.nameEn} — ${a.toFixed(1)} Acre Calculation\n\n- **Total Water**: ${water} cubic meters\n- **Irrigations**: ${crop.irrigations}\n- **Seed Required**: ${seed} kg\n- **Rainfall Needed**: ${crop.rainfallNeeded}\n- **Schedule**: ${crop.schedule}\n- **Best Regions**: ${crop.bestFor}\n\n✅ **Calculation complete.**`
       : `## 📊 ${crop.nameHi} — ${a.toFixed(1)} एकड़ गणना\n\n- **कुल पानी**: ${water} क्यूबिक मीटर\n- **सिंचाई**: ${crop.irrigationsHi}\n- **बीज आवश्यक**: ${seed} kg\n- **वर्षा आवश्यक**: ${crop.rainfallNeeded}\n- **अनुसूची**: ${crop.scheduleHi}\n- **उत्तम क्षेत्र**: ${crop.bestForHi}\n\n✅ **गणना पूर्ण।**`;
   }
 
-  // If only crop name, no land area
   if (crop && !land) {
-    return lang === "en"
+    return lk === "en"
       ? `## 🌾 ${crop.nameEn}\n\n| Detail | Info |\n|---|---|\n| **Water/Acre** | ${crop.waterPerAcre} m³ |\n| **Irrigations** | ${crop.irrigations} |\n| **Seed Rate/Acre** | ${crop.seedRatePerAcre} kg |\n| **Rainfall** | ${crop.rainfallNeeded} |\n| **Schedule** | ${crop.schedule} |\n| **Best Regions** | ${crop.bestFor} |\n\n💡 *Specify acres for exact calculation, e.g. "5 acre bajra"*`
       : `## 🌾 ${crop.nameHi}\n\n| विवरण | जानकारी |\n|---|---|\n| **पानी/एकड़** | ${crop.waterPerAcre} m³ |\n| **सिंचाई** | ${crop.irrigationsHi} |\n| **बीज दर/एकड़** | ${crop.seedRatePerAcre} kg |\n| **वर्षा** | ${crop.rainfallNeeded} |\n| **अनुसूची** | ${crop.scheduleHi} |\n| **उत्तम क्षेत्र** | ${crop.bestForHi} |\n\n💡 *सटीक गणना के लिए एकड़ बताएं, जैसे "5 acre बाजरा"*`;
   }
@@ -343,28 +345,35 @@ alert("नमस्ते, " + naam + "!");
   },
 ];
 
-export function searchKnowledge(query: string, lang: "en" | "hi"): string {
+export function searchKnowledge(query: string, lang: string, profileLandSize?: string): string {
+  const lk = getLangKey(lang);
   const lower = query.toLowerCase().trim();
 
-  // 1. Try agri-math calculations first (detects numbers + crops)
-  const agriResult = generateAgriCalc(query, lang);
+  // If profile has land size and user asks general crop question without specifying area
+  let q = query;
+  if (profileLandSize && !parseLandArea(query) && findCropFromQuery(query)) {
+    q = `${profileLandSize} ${query}`;
+  }
+
+  // 1. Try agri-math calculations first
+  const agriResult = generateAgriCalc(q, lang);
   if (agriResult) return agriResult;
 
-  // 2. Try GK database (exact 1-line answers)
+  // 2. Try GK database
   for (const gk of GK_DATABASE) {
     if (gk.keywords.some(k => lower.includes(k))) {
-      return lang === "en" ? gk.answerEn : gk.answerHi;
+      return lk === "en" ? gk.answerEn : gk.answerHi;
     }
   }
 
-  // 3. Check crop-related generic queries
+  // 3. Crop-related generic queries
   const cropKeywords = ["crop", "fasal", "kheti", "farming", "kisan", "agriculture", "sinchai", "irrigation", "water", "pani"];
   if (cropKeywords.some(k => lower.includes(k))) {
-    const allCrops = CROPS.map(c => lang === "en"
+    const allCrops = CROPS.map(c => lk === "en"
       ? `- **${c.nameEn}**: ${c.irrigations} | ${c.waterPerAcre} m³/acre | Seed: ${c.seedRatePerAcre} kg/acre`
       : `- **${c.nameHi}**: ${c.irrigationsHi} | ${c.waterPerAcre} m³/एकड़ | बीज: ${c.seedRatePerAcre} kg/एकड़`
     ).join("\n");
-    return lang === "en"
+    return lk === "en"
       ? `## 🌾 All Crops — Quick Reference\n\n${allCrops}\n\n💡 *Type "5 acre bajra" for exact calculation.*`
       : `## 🌾 सभी फसलें — त्वरित संदर्भ\n\n${allCrops}\n\n💡 *"5 acre बाजरा" टाइप करें सटीक गणना के लिए।*`;
   }
@@ -372,13 +381,20 @@ export function searchKnowledge(query: string, lang: "en" | "hi"): string {
   // 4. General knowledge base
   for (const entry of KNOWLEDGE_BASE) {
     if (entry.keywords.some(k => lower.includes(k))) {
-      const response = lang === "en" ? entry.responseEn : entry.responseHi;
+      const response = lk === "en" ? entry.responseEn : entry.responseHi;
       if (response) return response;
     }
   }
 
-  // 5. Fallback
-  return lang === "en"
+  // 5. Hinglish / Marwadi fallback personality
+  if (lang === "hinglish") {
+    return "Abhi yeh mujhe nahi aata, par **Jaswant** jaldi update karega! 🙏\n\nTry karo: 🌾 \"5 acre bajra\" | 📡 \"Chandrayaan\" | 💻 \"coding\" | 🇮🇳 \"Gandhi\"";
+  }
+  if (lang === "marwadi") {
+    return "अभी यो मनै नीं आवै, पण **जसवंत** जल्दी ही बतावैला! 🙏\n\nट्राई करो: 🌾 \"5 acre बाजरा\" | 📡 \"चंद्रयान\" | 💻 \"कोडिंग\" | 🇮🇳 \"गांधी\"";
+  }
+
+  return lk === "en"
     ? "Main abhi seekh raha hoon, par **Jaswant** mujhe jaldi hi iski jaankari dega! 🙏\n\nTry: 🌾 \"5 acre bajra\" | 📡 \"Chandrayaan\" | 💻 \"coding\" | 🇮🇳 \"Gandhi\""
     : "मैं अभी सीख रहा हूँ, पर **जसवंत** मुझे जल्दी ही इसकी जानकारी देगा! 🙏\n\nट्राई करें: 🌾 \"5 acre बाजरा\" | 📡 \"चंद्रयान\" | 💻 \"कोडिंग\" | 🇮🇳 \"गांधी\"";
 }
