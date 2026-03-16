@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { PanelLeft, Wheat, Volume2, VolumeX, Tractor } from "lucide-react";
+import { PanelLeft, Wheat, Volume2, VolumeX, Tractor, Settings } from "lucide-react";
 import ChatMessage from "@/components/ChatMessage";
 import ChatInput from "@/components/ChatInput";
 import ChatSidebar from "@/components/ChatSidebar";
