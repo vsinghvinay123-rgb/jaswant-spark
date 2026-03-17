@@ -25,15 +25,11 @@ const ApiKeyModal = ({ open, onClose }: ApiKeyModalProps) => {
 
   const handleSave = () => {
     const trimmed = apiKey.trim();
-    if (trimmed && !trimmed.startsWith("sk-")) {
-      toast({ title: "Invalid Key", description: "OpenAI API key should start with 'sk-'", variant: "destructive" });
-      return;
-    }
     if (trimmed) {
-      localStorage.setItem("bharat-openai-key", trimmed);
-      toast({ title: "✅ API Key Saved", description: "Bharat AI is now connected to OpenAI GPT." });
+      localStorage.setItem("bharat-gemini-key", trimmed);
+      toast({ title: "✅ API Key Saved", description: "Bharat AI is now connected to Google Gemini." });
     } else {
-      localStorage.removeItem("bharat-openai-key");
+      localStorage.removeItem("bharat-gemini-key");
       toast({ title: "🔌 Key Removed", description: "Switched back to offline mode." });
     }
     setHasKey(!!trimmed);
