@@ -61,7 +61,7 @@ const ApiKeyModal = ({ open, onClose }: ApiKeyModalProps) => {
           <div className="relative">
             <Input
               type={showKey ? "text" : "password"}
-              placeholder="sk-..."
+              placeholder="Paste your Gemini API key..."
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               className="pr-10 bg-background border-border font-mono text-xs"
