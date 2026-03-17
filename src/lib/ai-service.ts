@@ -32,7 +32,9 @@ async function callGemini(
   profileLandSize?: string
 ): Promise<string> {
   const apiKey = localStorage.getItem("bharat-gemini-key");
-  if (!apiKey) throw new Error("NO_KEY");
+  if (!apiKey || apiKey.trim() === "") {
+    throw new Error("DEBUG ERROR: API Key is missing. Please save it in settings.");
+  }
 
   const contextParts: string[] = [];
   if (profileLandSize) contextParts.push(`User's land size: ${profileLandSize}.`);
