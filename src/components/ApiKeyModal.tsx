@@ -46,7 +46,7 @@ const ApiKeyModal = ({ open, onClose }: ApiKeyModalProps) => {
             <Key className="h-5 w-5 text-primary" /> AI Settings
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-xs">
-            Paste your OpenAI API key to enable GPT-powered responses. Without a key, offline mode is used.
+            Paste your Google Gemini API key to enable AI-powered responses. Without a key, offline mode is used.
           </DialogDescription>
         </DialogHeader>
 
