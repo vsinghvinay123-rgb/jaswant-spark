@@ -36,7 +36,7 @@ const ApiKeyModal = ({ open, onClose }: ApiKeyModalProps) => {
     onClose();
   };
 
-  const maskedKey = apiKey ? `sk-...${apiKey.slice(-4)}` : "";
+  const maskedKey = apiKey ? `...${apiKey.slice(-6)}` : "";
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
