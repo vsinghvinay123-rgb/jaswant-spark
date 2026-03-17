@@ -60,9 +60,8 @@ async function callGemini(
   );
 
   if (!res.ok) {
-    const err = await res.text();
-    console.error("Gemini error:", res.status, err);
-    throw new Error("API Error: Please check your Gemini API key in Settings.");
+    const errorText = await res.text();
+    throw new Error(`Status: ${res.status} | Details: ${errorText}`);
   }
 
   const data = await res.json();
