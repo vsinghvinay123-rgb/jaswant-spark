@@ -17,7 +17,7 @@ const ApiKeyModal = ({ open, onClose }: ApiKeyModalProps) => {
 
   useEffect(() => {
     if (open) {
-      const saved = localStorage.getItem("bharat-openai-key") || "";
+      const saved = localStorage.getItem("bharat-gemini-key") || "";
       setApiKey(saved);
       setHasKey(!!saved);
     }
