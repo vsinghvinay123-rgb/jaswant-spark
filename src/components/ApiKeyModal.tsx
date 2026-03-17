@@ -17,7 +17,7 @@ const ApiKeyModal = ({ open, onClose }: ApiKeyModalProps) => {
 
   useEffect(() => {
     if (open) {
-      const saved = localStorage.getItem("bharat-openai-key") || "";
+      const saved = localStorage.getItem("bharat-gemini-key") || "";
       setApiKey(saved);
       setHasKey(!!saved);
     }
@@ -25,22 +25,18 @@ const ApiKeyModal = ({ open, onClose }: ApiKeyModalProps) => {
 
   const handleSave = () => {
     const trimmed = apiKey.trim();
-    if (trimmed && !trimmed.startsWith("sk-")) {
-      toast({ title: "Invalid Key", description: "OpenAI API key should start with 'sk-'", variant: "destructive" });
-      return;
-    }
     if (trimmed) {
-      localStorage.setItem("bharat-openai-key", trimmed);
-      toast({ title: "✅ API Key Saved", description: "Bharat AI is now connected to OpenAI GPT." });
+      localStorage.setItem("bharat-gemini-key", trimmed);
+      toast({ title: "✅ API Key Saved", description: "Bharat AI is now connected to Google Gemini." });
     } else {
-      localStorage.removeItem("bharat-openai-key");
+      localStorage.removeItem("bharat-gemini-key");
       toast({ title: "🔌 Key Removed", description: "Switched back to offline mode." });
     }
     setHasKey(!!trimmed);
     onClose();
   };
 
-  const maskedKey = apiKey ? `sk-...${apiKey.slice(-4)}` : "";
+  const maskedKey = apiKey ? `...${apiKey.slice(-6)}` : "";
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -50,7 +46,7 @@ const ApiKeyModal = ({ open, onClose }: ApiKeyModalProps) => {
             <Key className="h-5 w-5 text-primary" /> AI Settings
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-xs">
-            Paste your OpenAI API key to enable GPT-powered responses. Without a key, offline mode is used.
+            Paste your Google Gemini API key to enable AI-powered responses. Without a key, offline mode is used.
           </DialogDescription>
         </DialogHeader>
 
@@ -65,7 +61,7 @@ const ApiKeyModal = ({ open, onClose }: ApiKeyModalProps) => {
           <div className="relative">
             <Input
               type={showKey ? "text" : "password"}
-              placeholder="sk-..."
+              placeholder="Paste your Gemini API key..."
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               className="pr-10 bg-background border-border font-mono text-xs"
@@ -79,7 +75,7 @@ const ApiKeyModal = ({ open, onClose }: ApiKeyModalProps) => {
           </div>
 
           <p className="text-[10px] text-muted-foreground">
-            Your key is stored locally in your browser. It is never sent to any server other than OpenAI.
+            Your key is stored locally in your browser. It is never sent to any server other than Google.
           </p>
 
           <div className="flex gap-2">
@@ -89,7 +85,7 @@ const ApiKeyModal = ({ open, onClose }: ApiKeyModalProps) => {
             {hasKey && (
               <Button
                 variant="outline"
-                onClick={() => { setApiKey(""); localStorage.removeItem("bharat-openai-key"); setHasKey(false); toast({ title: "Key removed" }); }}
+                onClick={() => { setApiKey(""); localStorage.removeItem("bharat-gemini-key"); setHasKey(false); toast({ title: "Key removed" }); }}
                 className="text-xs font-heading border-border text-muted-foreground"
               >
                 Remove
