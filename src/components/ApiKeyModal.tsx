@@ -75,7 +75,7 @@ const ApiKeyModal = ({ open, onClose }: ApiKeyModalProps) => {
           </div>
 
           <p className="text-[10px] text-muted-foreground">
-            Your key is stored locally in your browser. It is never sent to any server other than OpenAI.
+            Your key is stored locally in your browser. It is never sent to any server other than Google.
           </p>
 
           <div className="flex gap-2">
