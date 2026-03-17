@@ -26,45 +26,45 @@ function getLangInstruction(lang: Lang): string {
   }
 }
 
-async function callOpenAI(
+async function callGemini(
   messages: Message[],
   lang: Lang,
   profileLandSize?: string
 ): Promise<string> {
-  const apiKey = localStorage.getItem("bharat-openai-key");
+  const apiKey = localStorage.getItem("bharat-gemini-key");
   if (!apiKey) throw new Error("NO_KEY");
 
   const contextParts: string[] = [];
   if (profileLandSize) contextParts.push(`User's land size: ${profileLandSize}.`);
   contextParts.push(getLangInstruction(lang));
 
-  const systemContent = SYSTEM_PROMPT + "\n\n" + contextParts.join(" ");
+  const systemInstruction = SYSTEM_PROMPT + "\n\n" + contextParts.join(" ");
 
-  const apiMessages = [
-    { role: "system", content: systemContent },
-    ...messages.map((m) => ({ role: m.role, content: m.content })),
-  ];
+  const conversationHistory = messages
+    .map((m) => `${m.role === "user" ? "USER" : "ASSISTANT"}: ${m.content}`)
+    .join("\n");
 
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: "gpt-3.5-turbo",
-      messages: apiMessages,
-    }),
-  });
+  const fullPrompt = `SYSTEM INSTRUCTION: ${systemInstruction}\n\n${conversationHistory ? "CONVERSATION HISTORY:\n" + conversationHistory : ""}`;
+
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ role: "user", parts: [{ text: fullPrompt }] }],
+      }),
+    }
+  );
 
   if (!res.ok) {
     const err = await res.text();
-    console.error("OpenAI error:", res.status, err);
-    throw new Error(`OpenAI API error: ${res.status}`);
+    console.error("Gemini error:", res.status, err);
+    throw new Error("API Error: Please check your Gemini API key in Settings.");
   }
 
   const data = await res.json();
-  return data.choices[0].message.content;
+  return data.candidates[0].content.parts[0].text;
 }
 
 export async function sendMessage(
