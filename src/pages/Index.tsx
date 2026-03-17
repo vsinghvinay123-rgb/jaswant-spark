@@ -113,9 +113,10 @@ const Index = () => {
         );
         if (ttsEnabled) speakText(response, lang);
       } catch {
+        // Should not reach here since sendMessage now returns debug info
         const errMsg: Message = {
           id: generateId(), role: "assistant",
-          content: lang === "en" || lang === "hinglish" ? "⚠️ Error occurred." : "⚠️ त्रुटि हुई।",
+          content: "DEBUG INFO: Unexpected error in sendMessage",
           timestamp: new Date(),
         };
         setSessions((prev) =>
