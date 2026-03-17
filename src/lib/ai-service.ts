@@ -73,7 +73,7 @@ export async function sendMessage(
   profileLandSize?: string
 ): Promise<string> {
   try {
-    return await callOpenAI(messages, lang, profileLandSize);
+    return await callGemini(messages, lang, profileLandSize);
   } catch (e: any) {
     if (e.message === "NO_KEY") {
       // Fallback to offline

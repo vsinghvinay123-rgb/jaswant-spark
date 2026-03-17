@@ -85,7 +85,7 @@ const ApiKeyModal = ({ open, onClose }: ApiKeyModalProps) => {
             {hasKey && (
               <Button
                 variant="outline"
-                onClick={() => { setApiKey(""); localStorage.removeItem("bharat-openai-key"); setHasKey(false); toast({ title: "Key removed" }); }}
+                onClick={() => { setApiKey(""); localStorage.removeItem("bharat-gemini-key"); setHasKey(false); toast({ title: "Key removed" }); }}
                 className="text-xs font-heading border-border text-muted-foreground"
               >
                 Remove
