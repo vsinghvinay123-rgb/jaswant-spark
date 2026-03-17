@@ -32,7 +32,9 @@ async function callGemini(
   profileLandSize?: string
 ): Promise<string> {
   const apiKey = localStorage.getItem("bharat-gemini-key");
-  if (!apiKey) throw new Error("NO_KEY");
+  if (!apiKey || apiKey.trim() === "") {
+    throw new Error("DEBUG ERROR: API Key is missing. Please save it in settings.");
+  }
 
   const contextParts: string[] = [];
   if (profileLandSize) contextParts.push(`User's land size: ${profileLandSize}.`);
@@ -58,9 +60,8 @@ async function callGemini(
   );
 
   if (!res.ok) {
-    const err = await res.text();
-    console.error("Gemini error:", res.status, err);
-    throw new Error("API Error: Please check your Gemini API key in Settings.");
+    const errorText = await res.text();
+    throw new Error(`Status: ${res.status} | Details: ${errorText}`);
   }
 
   const data = await res.json();
@@ -75,13 +76,10 @@ export async function sendMessage(
   try {
     return await callGemini(messages, lang, profileLandSize);
   } catch (e: any) {
-    if (e.message === "NO_KEY") {
-      // Fallback to offline
-      const lastMessage = messages[messages.length - 1];
-      await new Promise((r) => setTimeout(r, 400 + Math.random() * 600));
-      return searchKnowledge(lastMessage.content, lang, profileLandSize);
+    if (e.message === "DEBUG ERROR: API Key is missing. Please save it in settings.") {
+      return e.message;
     }
-    throw e;
+    return "DEBUG INFO: " + e.message;
   }
 }
 
