@@ -1,9 +1,5 @@
-import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Key, Eye, EyeOff, CheckCircle, AlertCircle } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { Cpu } from "lucide-react";
 
 interface ApiKeyModalProps {
   open: boolean;
@@ -11,87 +7,25 @@ interface ApiKeyModalProps {
 }
 
 const ApiKeyModal = ({ open, onClose }: ApiKeyModalProps) => {
-  const [apiKey, setApiKey] = useState("");
-  const [showKey, setShowKey] = useState(false);
-  const [hasKey, setHasKey] = useState(false);
-
-  useEffect(() => {
-    if (open) {
-      const saved = localStorage.getItem("bharat-gemini-key") || "";
-      setApiKey(saved);
-      setHasKey(!!saved);
-    }
-  }, [open]);
-
-  const handleSave = () => {
-    const trimmed = apiKey.trim();
-    if (trimmed) {
-      localStorage.setItem("bharat-gemini-key", trimmed);
-      toast({ title: "✅ API Key Saved", description: "Bharat AI is now connected to Google Gemini." });
-    } else {
-      localStorage.removeItem("bharat-gemini-key");
-      toast({ title: "🔌 Key Removed", description: "Switched back to offline mode." });
-    }
-    setHasKey(!!trimmed);
-    onClose();
-  };
-
-  const maskedKey = apiKey ? `...${apiKey.slice(-6)}` : "";
-
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="glass-strong border-border max-w-sm">
         <DialogHeader>
           <DialogTitle className="font-heading flex items-center gap-2 text-foreground">
-            <Key className="h-5 w-5 text-primary" /> AI Settings
+            <Cpu className="h-5 w-5 text-primary" /> Bharat AI Settings
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-xs">
-            Paste your Google Gemini API key to enable AI-powered responses. Without a key, offline mode is used.
+            Bharat AI runs 100% offline — no API key needed!
           </DialogDescription>
         </DialogHeader>
-
-        <div className="space-y-4 pt-2">
-          {/* Status */}
-          <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-heading ${hasKey ? "bg-secondary/10 text-secondary" : "bg-muted text-muted-foreground"}`}>
-            {hasKey ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
-            {hasKey ? `Connected: ${maskedKey}` : "Offline Mode (No API Key)"}
+        <div className="space-y-3 pt-2">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/10 text-secondary text-xs font-heading">
+            <Cpu className="h-4 w-4" />
+            Offline Mode Active · No Internet Required
           </div>
-
-          {/* Input */}
-          <div className="relative">
-            <Input
-              type={showKey ? "text" : "password"}
-              placeholder="Paste your Gemini API key..."
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              className="pr-10 bg-background border-border font-mono text-xs"
-            />
-            <button
-              onClick={() => setShowKey(!showKey)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            >
-              {showKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          </div>
-
           <p className="text-[10px] text-muted-foreground">
-            Your key is stored locally in your browser. It is never sent to any server other than Google.
+            All responses are powered by a built-in rule-based engine. Ask about crops, coding, ISRO, or Jaswant!
           </p>
-
-          <div className="flex gap-2">
-            <Button onClick={handleSave} className="flex-1 bg-primary text-primary-foreground font-heading text-xs">
-              Save Key
-            </Button>
-            {hasKey && (
-              <Button
-                variant="outline"
-                onClick={() => { setApiKey(""); localStorage.removeItem("bharat-gemini-key"); setHasKey(false); toast({ title: "Key removed" }); }}
-                className="text-xs font-heading border-border text-muted-foreground"
-              >
-                Remove
-              </Button>
-            )}
-          </div>
         </div>
       </DialogContent>
     </Dialog>
