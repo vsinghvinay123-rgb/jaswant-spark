@@ -84,7 +84,7 @@ export async function sendMessage(
   // Simulate slight delay for natural feel
   await new Promise((r) => setTimeout(r, 400 + Math.random() * 600));
 
-  return getOfflineResponse(lastUserMsg.content);
+  return smartSearch(lastUserMsg.content);
 }
 
 export function generateId(): string {
