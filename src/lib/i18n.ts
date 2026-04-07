@@ -29,13 +29,16 @@ export const UI_TEXT: Record<Lang, {
   profileLang: string;
   save: string;
   splashTagline: string;
+  botPrefix: string;
+  fallback: string;
+  sendBtn: string;
 }> = {
   en: {
     appName: "Bharat AI",
     tagline: "Your Indian Knowledge Assistant",
     chatHistory: "Chat History",
     newChat: "New Chat",
-    placeholder: "Ask anything — \"5 acre bajra\", \"ISRO\", \"coding\"...",
+    placeholder: "Ask about crops, pests, or weather...",
     poweredBy: "Created by Jaswant",
     cropCalculator: "Crop Calculator",
     selectCrop: "Select a crop",
@@ -51,6 +54,9 @@ export const UI_TEXT: Record<Lang, {
     profileLang: "Preferred Language",
     save: "Save",
     splashTagline: "Empowering Farmers. Built by Jaswant.",
+    botPrefix: "🤖 **Jaswant's AI Analysis:**\n\n",
+    fallback: "Sorry, I don't have this information yet. Please ask about crops, farming, or coding!",
+    sendBtn: "Send",
     welcome: `## Namaste! 🙏🇮🇳
 
 I am **Bharat AI**, created by **Jaswant**.
@@ -60,7 +66,7 @@ I am **Bharat AI**, created by **Jaswant**.
 - 📷 Fasal Doctor — scan crop leaves
 - 📍 Auto-Location — optimized crop suggestions
 - 🎤 Voice Input — speak your question
-- 📡 60+ GK facts — ISRO, History, Constitution
+- 📡 100+ GK facts — ISRO, History, Constitution
 - 💻 Coding basics in Hinglish
 
 **Use the tools below or type your question. Direct answers only.**`,
@@ -70,7 +76,7 @@ I am **Bharat AI**, created by **Jaswant**.
     tagline: "आपका भारतीय ज्ञान सहायक",
     chatHistory: "चैट इतिहास",
     newChat: "नई चैट",
-    placeholder: "कुछ भी पूछें — \"5 एकड़ बाजरा\", \"ISRO\", \"कोडिंग\"...",
+    placeholder: "फसल, मौसम या कीड़ों के बारे में पूछें...",
     poweredBy: "जसवंत द्वारा निर्मित",
     cropCalculator: "फसल कैलकुलेटर",
     selectCrop: "फसल चुनें",
@@ -86,16 +92,19 @@ I am **Bharat AI**, created by **Jaswant**.
     profileLang: "पसंदीदा भाषा",
     save: "सेव करें",
     splashTagline: "किसानों को सशक्त बनाना। जसवंत द्वारा निर्मित।",
+    botPrefix: "🤖 **जसवंत एआई रिपोर्ट:**\n\n",
+    fallback: "माफ़ कीजिए, यह जानकारी मेरे डेटाबेस में नहीं है।",
+    sendBtn: "भेजें",
     welcome: `## नमस्ते! 🙏🇮🇳
 
 मैं **भारत AI** हूँ, **जसवंत** द्वारा निर्मित।
 
 **क्षमताएं:**
-- 🌾 एग्री-मैथ इंजन — "5 एकड़ बाजरा" टाइप करें तुरंत गणना के लिए
+- 🌾 एग्री-मैथ इंजन — "5 एकड़ बाजरा" टाइप करें
 - 📷 फसल डॉक्टर — फसल की पत्तियां स्कैन करें
 - 📍 ऑटो-लोकेशन — अनुकूलित फसल सुझाव
 - 🎤 वॉइस इनपुट — अपना सवाल बोलें
-- 📡 60+ GK तथ्य — ISRO, इतिहास, संविधान
+- 📡 100+ GK तथ्य — ISRO, इतिहास, संविधान
 - 💻 हिंग्लिश में कोडिंग बेसिक्स
 
 **नीचे के टूल्स इस्तेमाल करें या सवाल टाइप करें। सीधे जवाब।**`,
@@ -105,7 +114,7 @@ I am **Bharat AI**, created by **Jaswant**.
     tagline: "Aapka Indian Knowledge Assistant",
     chatHistory: "Chat History",
     newChat: "Nayi Chat",
-    placeholder: "Kuch bhi pucho — \"5 acre bajra\", \"ISRO\", \"coding\"...",
+    placeholder: "Fasal, mausam ya keedo ke baare mein puchein...",
     poweredBy: "Jaswant ne banaya",
     cropCalculator: "Crop Calculator",
     selectCrop: "Crop chuno",
@@ -121,16 +130,19 @@ I am **Bharat AI**, created by **Jaswant**.
     profileLang: "Pasandida Bhasha",
     save: "Save Karo",
     splashTagline: "Kisano ko Empower karna. Jaswant ne banaya.",
+    botPrefix: "🤖 **Jaswant AI Report:**\n\n",
+    fallback: "Maaf kijiye, yeh jankari mere database mein nahi hai.",
+    sendBtn: "Bhejein",
     welcome: `## Hello! 🙏🇮🇳
 
 Main **Bharat AI** hoon, **Jaswant** ka banaya hua AI.
 
 **Capabilities:**
-- 🌾 Agri-Math Engine — "5 acre bajra" type karo instant calculation ke liye
+- 🌾 Agri-Math Engine — "5 acre bajra" type karo
 - 📷 Fasal Doctor — crop ki pattiyan scan karo
 - 📍 Auto-Location — optimized crop suggestions
 - 🎤 Voice Input — apna sawaal bolo
-- 📡 60+ GK facts — ISRO, History, Constitution
+- 📡 100+ GK facts — ISRO, History, Constitution
 - 💻 Coding basics Hinglish mein
 
 **Neeche ke tools use karo ya sawaal type karo. Seedhe jawaab.**`,
@@ -140,7 +152,7 @@ Main **Bharat AI** hoon, **Jaswant** ka banaya hua AI.
     tagline: "थारो भारतीय ज्ञान सहायक",
     chatHistory: "चैट इतिहास",
     newChat: "नई चैट",
-    placeholder: "कुछ भी पूछो — \"5 एकड़ बाजरा\", \"ISRO\", \"कोडिंग\"...",
+    placeholder: "फसल या मौसम रै बारै में पूछो सा...",
     poweredBy: "जसवंत रो बनायो",
     cropCalculator: "फसल कैलकुलेटर",
     selectCrop: "फसल चुणो",
@@ -156,16 +168,19 @@ Main **Bharat AI** hoon, **Jaswant** ka banaya hua AI.
     profileLang: "पसंदीदा भाषा",
     save: "सेव करो",
     splashTagline: "किसाना नै सशक्त करणो। जसवंत रो बनायो।",
+    botPrefix: "🤖 **जसवंत रो एआई बतावै है:**\n\n",
+    fallback: "माफी चाहूँ सा, आ जानकारी म्हारै कनै कोनी।",
+    sendBtn: "भेजो सा",
     welcome: `## खम्मा घणी! 🙏🇮🇳
 
 मैं **भारत AI** हूँ, **जसवंत** रो बनायो गयो।
 
 **क्षमताएं:**
-- 🌾 एग्री-मैथ इंजन — "5 एकड़ बाजरा" टाइप करो तुरंत गणना के लिए
+- 🌾 एग्री-मैथ इंजन — "5 एकड़ बाजरा" टाइप करो
 - 📷 फसल डॉक्टर — फसल री पत्तियां स्कैन करो
 - 📍 ऑटो-लोकेशन — अनुकूलित फसल सुझाव
 - 🎤 वॉइस इनपुट — थारो सवाल बोलो
-- 📡 60+ GK तथ्य — ISRO, इतिहास, संविधान
+- 📡 100+ GK तथ्य — ISRO, इतिहास, संविधान
 - 💻 हिंग्लिश में कोडिंग बेसिक्स
 
 **नीचे रा टूल्स इस्तेमाल करो या सवाल टाइप करो। सीधा जवाब।**`,

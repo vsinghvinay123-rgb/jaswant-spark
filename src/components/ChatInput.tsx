@@ -53,9 +53,10 @@ const ChatInput = ({ onSend, disabled, lang }: ChatInputProps) => {
           <button
             onClick={handleSubmit}
             disabled={disabled || !input.trim()}
-            className="flex-shrink-0 w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center transition-all saffron-glow hover:brightness-110 disabled:opacity-20 disabled:cursor-not-allowed"
+            className="flex-shrink-0 h-9 px-3 rounded-xl bg-primary text-primary-foreground flex items-center justify-center gap-1.5 transition-all saffron-glow hover:brightness-110 disabled:opacity-20 disabled:cursor-not-allowed text-xs font-heading font-semibold"
           >
             <Send className="h-4 w-4" />
+            <span className="hidden sm:inline">{t.sendBtn}</span>
           </button>
         </div>
       </div>
