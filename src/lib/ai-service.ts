@@ -130,6 +130,82 @@ const kisanTechGK = [
   { keywords: ["problem statement", "kyun banaya", "idea"], answer: "🎯 **Problem Statement:** Gaon mein internet connection kamzor hota hai aur bade AI kisan ki local bhasha nahi samajhte. Bharat AI is problem ko 100% offline rehkar aur local faslon ki sateek jankari dekar solve karta hai. Yahi iski USP (Unique Selling Proposition) hai." },
   { keywords: ["future plan", "aage kya", "roadmap"], answer: "🚀 **Future Roadmap:** Jaswant ka aage ka plan isme ek lightweight 'Offline Image Recognition' (Computer Vision) jodna hai, jisse kisan sirf fasal ki photo khinchega aur AI bina net ke bimari pehchan kar dawa bata dega!" },
   { keywords: ["team", "kon kon", "solo"], answer: "🤝 **The Team:** Yeh poora offline AI architecture aur database ek single tech visionary, Jaswant ne design kiya hai, jo future ki tech industry mein ek bada badlav lane ke liye taiyar hain." },
+
+  // --- Batch 25: Basic India GK & National Leaders ---
+  { keywords: ["pm of india", "pradhan mantri", "prime minister"], answer: "🇮🇳 **Pradhan Mantri (PM):** Bharat ke vartaman Pradhan Mantri Shri Narendra Modi hain." },
+  { keywords: ["president", "rashtrapati"], answer: "🇮🇳 **Rashtrapati (President):** Bharat ki vartaman Rashtrapati Smt. Droupadi Murmu hain. Yeh is pad par pahunchne wali pehli adivasi mahila hain." },
+  { keywords: ["rashtriya pashu", "rashtriya pakshi", "national animal", "national bird"], answer: "🦚 **Rashtriya Prateek:** Bharat ka Rashtriya Pashu 'Baagh' (Tiger) aur Rashtriya Pakshi 'Mor' (Peacock) hai. Bharat ka Rashtriya Phool 'Kamal' (Lotus) hai." },
+  { keywords: ["national anthem", "rashtragaan", "jana gana"], answer: "🎶 **Rashtragaan:** Bharat ka Rashtragaan 'Jana Gana Mana' hai jise Rabindranath Tagore ne likha tha. Wahi hamara Rashtrageet 'Vande Mataram' hai jise Bankim Chandra Chatterjee ne likha tha." },
+  { keywords: ["iron man of india", "loh purush", "sardar patel"], answer: "🗽 **Loh Purush (Iron Man):** Sardar Vallabhbhai Patel ko Bharat ka Loh Purush kaha jata hai. Unhone azadi ke baad Bharat ki 500+ riyasaton ko ekjuth kiya tha." },
+
+  // --- Batch 26: World Tech & Famous Inventions ---
+  { keywords: ["computer kisne", "father of computer", "computer aavishkar"], answer: "💻 **Computer:** Computer ka aavishkar Charles Babbage ne kiya tha. Inhe 'Father of Computer' kaha jata hai." },
+  { keywords: ["bulb kisne", "bijli ka bulb", "thomas edison"], answer: "💡 **Bulb:** Bijli ke bulb ka aavishkar Thomas Alva Edison ne kiya tha. Unhone iske liye hazaron baar try kiya tha, jo kisi bhi tech founder ke liye 'Never Give Up' ka sabse bada example hai!" },
+  { keywords: ["telephone", "phone kisne", "graham bell"], answer: "☎️ **Telephone:** Telephone ka aavishkar Alexander Graham Bell ne kiya tha." },
+  { keywords: ["shunya kisne", "zero", "aryabhatta"], answer: "0️⃣ **Zero (Shunya):** Zero (0) ka aavishkar Bharat ke mahan ganitagya (mathematician) Aryabhata ne kiya tha. Yeh duniya ko Bharat ki sabse badi den hai!" },
+  { keywords: ["aeroplane kisne", "havai jahaz", "plane"], answer: "✈️ **Aeroplane:** Havai jahaz ka aavishkar 'Wright Brothers' (Orville aur Wilbur Wright) ne 1903 mein kiya tha." },
+
+  // --- Batch 27: Basic Science & Human Body ---
+  { keywords: ["kitni haddiyan", "bones", "haddi"], answer: "🦴 **Manav Sharir (Bones):** Ek adult insaan ke sharir mein total 206 haddiyan (bones) hoti hain. Jabki ek navjat shishu (newborn baby) mein lagbhag 300 haddiyan hoti hain jo baad mein jud jati hain." },
+  { keywords: ["khoon laal", "blood red", "hemoglobin"], answer: "🩸 **Khoon (Blood):** Insani khoon ka rang laal 'Hemoglobin' naam ke protein ki wajah se hota hai. Yeh oxygen ko humare fefdo (lungs) se pure sharir mein phailata hai." },
+  { keywords: ["vitamin c", "immunity", "nimbu"], answer: "🍊 **Vitamins:** Bimariyon se ladne ki takat (Immunity) badhane ke liye Vitamin C sabse zaroori hai, jo nimbu, santra (orange) aur aawla (amla) jaise khatte falon mein milta hai." },
+  { keywords: ["sabse bada grah", "largest planet", "jupiter"], answer: "🪐 **Solar System:** Humare solar system ka sabse bada grah (planet) 'Jupiter' (Brihaspati) hai. Aur Suraj ke sabse nazdeek wala grah 'Mercury' (Budh) hai." },
+  { keywords: ["poudhe khana", "photosynthesis", "prakash sanshleshan"], answer: "🌿 **Photosynthesis:** Poudhe suraj ki roshni, carbon dioxide aur pani ka use karke apna khana khud banate hain. Is process ko 'Prakash Sanshleshan' (Photosynthesis) kehte hain." },
+
+  // --- Batch 28: Rajasthan Culture, Geography & Pride ---
+  { keywords: ["hawa mahal", "jaipur mahal", "hava"], answer: "🏰 **Hawa Mahal:** Jaipur ka Hawa Mahal Maharaja Sawai Pratap Singh ne banwaya tha. Isme 953 jharokhe (khidkiyan) hain taaki rajput raniyan bina kisi ko dikhe bahar ka tyohar dekh sakein." },
+  { keywords: ["indira gandhi canal", "nehar", "rajasthan canal"], answer: "🌊 **Indira Gandhi Nehar:** Yeh Bharat ki sabse lambi nehar (canal) hai. Yeh Punjab se shuru hoti hai aur Thar registan (Bikaner, Jaisalmer) ko peene aur kheti ka pani deti hai. Yeh Rajasthan ki jeevan rekha (lifeline) hai!" },
+  { keywords: ["ghoomar", "dance", "kalbelia", "folk"], answer: "💃 **Rajasthan Folk Dance:** 'Ghoomar' Rajasthan ka sabse famous paramparik nritya (dance) hai. Sath hi 'Kalbelia' dance ko toh UNESCO ne bhi world heritage mein shamil kiya hai." },
+  { keywords: ["guru shikhar", "sabse unchi choti", "mount abu"], answer: "⛰️ **Guru Shikhar:** Rajasthan (aur Aravalli parvat) ki sabse unchi choti Mount Abu mein sthit 'Guru Shikhar' hai. Iski unchai 1,722 meters hai." },
+
+  // --- Batch 29: Important Days (Mahatvapurna Diwas) ---
+  { keywords: ["kisan diwas", "farmer day", "chaudhary charan singh"], answer: "🌾 **Kisan Diwas:** Bharat mein har saal 23 December ko 'Rashtriya Kisan Diwas' manaya jata hai. Yeh din Bharat ke 5ve Pradhan Mantri, Chaudhary Charan Singh ji ke janamdin par manaya jata hai." },
+  { keywords: ["environment day", "paryavaran", "5 june"], answer: "🌍 **Paryavaran Diwas:** Har saal 5 June ko 'World Environment Day' manaya jata hai taaki logon ko ped lagane aur nature bachane ke liye jagruk kiya ja sake." },
+  { keywords: ["yoga day", "yog diwas", "21 june"], answer: "🧘 **International Yoga Day:** Duniya bhar mein 21 June ko 'Antarrashtriya Yog Diwas' manaya jata hai. Bharat ne hi duniya ko Yog sikhaya hai!" },
+  { keywords: ["earth day", "prithvi diwas", "22 april"], answer: "🌎 **Earth Day:** 22 April ko 'Prithvi Diwas' manaya jata hai. Global warming aur pollution se prithvi ko bachana iska mukhya maqsad hai." },
+  { keywords: ["science day", "vigyan diwas", "cv raman"], answer: "🔬 **National Science Day:** 28 February ko 'Rashtriya Vigyan Diwas' manaya jata hai. Isi din mahan bhartiya scientist Sir C.V. Raman ne 'Raman Effect' ki khoj ki thi." },
+
+  // --- Batch 30: Everyday Health & Survival Science ---
+  { keywords: ["dengue", "malaria", "machhar", "bukhar"], answer: "🦟 **Dengue & Malaria:** Yeh dono khatarnak bukhar machhar ke katne se hote hain (Dengue Aedes machhar se aur Malaria Anopheles se). Bachav ke liye aaspaas pani ikattha na hone dein aur machhardani (net) ka use karein." },
+  { keywords: ["pani saaf", "filter", "fitkari", "alum", "boil"], answer: "🚰 **Pani Saaf Karna:** Peene ke pani ko bacteria-free banane ka sabse asan tarika usko ubalna (boil) hai. Khet mein gadle pani ko saaf karne ke liye usme Fitkari (Alum) ghumayein, saara kachra niche baith jayega." },
+  { keywords: ["vitamin a", "aankh", "gajar", "papita"], answer: "👁️ **Vitamin A (Aankhon ke liye):** Aankhon ki roshni tez karne ke liye Vitamin A zaroori hai. Yeh gajar (carrot), papita aur hare patte wali sabziyon mein sabse zyada paya jata hai." },
+  { keywords: ["gravity", "gurutvakarshan", "seb girna", "newton"], answer: "🍎 **Gravity (Gurutvakarshan):** Duniya ki har chiz zameen ki taraf kyun girti hai? Is 'Gravity' ki khoj mahan scientist Isaac Newton ne ki thi jab unke sir par ek seb (apple) gira tha." },
+
+  // --- Batch 31: Cyber Security & Tech Awareness ---
+  { keywords: ["otp", "bank fraud", "paise kat gaye", "thagi"], answer: "🚨 **Cyber Fraud Alert:** Bank ya sarkar kabhi bhi aapse phone par OTP (One Time Password) ya PIN nahi mangti. Agar galti se paise kat jayein, toh turant Cyber Crime Helpline '1930' par call karein." },
+  { keywords: ["virus", "malware", "phone hang"], answer: "🦠 **Phone Virus/Malware:** Agar aapka phone anjaan links par click karne se hang ho raha hai, toh turant anjaan apps ko delete karein aur phone ko 'Factory Reset' kar lein. Hamesha Play Store se hi app download karein." },
+  { keywords: ["motherboard", "processor", "cpu"], answer: "🖥️ **Computer Hardware:** CPU (Central Processing Unit) computer ka dimaag hai, aur Motherboard uski haddi (backbone) hai jisse saare purze (parts) jude hote hain." },
+  { keywords: ["wi-fi", "router", "internet speed"], answer: "📶 **Wi-Fi & Router:** Router ek aisi machine hai jo internet line ko wireless signal (Wi-Fi) mein badalti hai taaki aapka phone bina wire ke internet se jud sake." },
+
+  // --- Batch 32: Agri-Finance & Pashu Bima ---
+  { keywords: ["pashu bima", "gay bima", "bhains insurance"], answer: "🐄 **Pashu Bima Yojana:** Sarkar pashuon ke marne ya chori hone par nuksan se bachane ke liye Pashu Bima deti hai. Isme kisan ko sirf thoda sa premium bharna hota hai aur gaay/bhains ka kaan (ear) tag kiya jata hai." },
+  { keywords: ["tractor loan", "krishi yantra loan"], answer: "🚜 **Tractor Loan:** Naya tractor lene ke liye bank 80% tak loan deti hai. Agar aap apne KCC (Kisan Credit Card) ka record achha rakhte hain, toh loan jaldi aur saste byaj (interest) par mil jata hai." },
+  { keywords: ["agri clinic", "soil lab business"], answer: "🔬 **Agri-Clinics & Business:** Kheti ki padhai karne ke baad aap gaon mein mitti jaanch (Soil testing) ki lab ya beej/khad ki dukan khol sakte hain. NABARD iske liye 36% se 44% tak ki subsidy deta hai." },
+  { keywords: ["fasal kharab", "muavza", "patwari"], answer: "📋 **Muavza (Compensation):** Barish ya sukhe se fasal kharab hone par sabse pehle apne Patwari se mil kar 'Girdawari' mein nuksan darj karwayein, tabhi sarkar se muavza milta hai." },
+
+  // --- Batch 33: Class 10 Maths & Physics ---
+  { keywords: ["pythagoras", "karn", "adhar"], answer: "📐 **Pythagoras Theorem:** Ek right-angled triangle mein: (Hypotenuse)² = (Base)² + (Perpendicular)². Matlab sabse lambi line ka square baki dono lines ke squares ke jod ke barabar hota hai." },
+  { keywords: ["circle area", "vrit ka kshetrafal", "pi"], answer: "⭕ **Area of Circle:** Vrit (Circle) ka kshetrafal nikalne ka formula πr² hota hai. Yahan 'π' (Pi) ki value lagbhag 22/7 ya 3.14 hoti hai aur 'r' circle ki radius (trijiya) hai." },
+  { keywords: ["ohm law", "ohm ka niyam", "bijli ka niyam"], answer: "⚡ **Ohm's Law (Physics):** V = IR. Iska matlab hai ki voltage (V) hamesha current (I) aur resistance (R) ke guna (multiply) ke barabar hota hai. Yeh bijli (electricity) ka sabse zaruri niyam hai." },
+  { keywords: ["light reflection", "prakash ka paraavartan", "sheesha"], answer: "🪞 **Reflection of Light:** Jab prakash (light) kisi chikni satah (jaise sheesha) se takrakar wapas laut jata hai, toh use Prakash ka Paraavartan (Reflection) kehte hain. Isme Angle of Incidence hamesha Angle of Reflection ke barabar hota hai." },
+
+  // --- Batch 34: English Grammar Basics ---
+  { keywords: ["noun", "sangya", "naming word"], answer: "📝 **Noun (Sangya):** Kisi bhi vyakti, jagah, jaanwar ya chiz ke naam ko Noun kehte hain. (Example: Jaswant, Sardarshahar, Dog, Computer). 'Noun is a naming word!'" },
+  { keywords: ["vowel", "swar", "a e i o u"], answer: "🔤 **Vowels & Consonants:** English alphabet mein 26 letters hote hain. Inme se 5 Vowels (A, E, I, O, U) hote hain, aur baaki 21 letters ko Consonants (Vyanjan) kehte hain." },
+  { keywords: ["tense", "kaal", "past present future"], answer: "⏳ **Tense (Kaal):** Tense humein samay (time) batata hai. Yeh 3 type ke hote hain: Present (Jo chal raha hai), Past (Jo beet gaya), aur Future (Jo aayega)." },
+  { keywords: ["english kaise seekhein", "spoken english"], answer: "🗣️ **Spoken English Tips:** English bolna seekhne ka sabse best tareeqa hai use roz sunna! English movies ya YouTube videos subtitles ke sath dekhein, aur chote-chote sentences rozana bolne ki practice karein." },
+
+  // --- Batch 35: Tech Giants & Entrepreneurship ---
+  { keywords: ["google kisne", "founder of google"], answer: "🔍 **Google History:** Google ki shuruat 1998 mein 'Larry Page' aur 'Sergey Brin' ne ek chote se garage se ki thi. Aaj yeh duniya ka sabse bada search engine hai. Iska pehla naam 'BackRub' tha!" },
+  { keywords: ["apple kisne", "steve jobs", "iphone founder"], answer: "🍏 **Apple & Steve Jobs:** Apple company ko Steve Jobs aur Steve Wozniak ne banaya tha. Steve Jobs ne sikhaya ki technology sirf kaam ki nahi, balki sundar aur aasan (user-friendly) bhi honi chahiye." },
+  { keywords: ["elon musk", "spacex", "tesla"], answer: "🚀 **Elon Musk:** Yeh aaj ki sadi ke sabse bade tech visionary hain. Inki company 'SpaceX' rocket banati hai aur 'Tesla' electric cars. Inka sapna insaan ko Mars (Mangal grah) par basana hai." },
+  { keywords: ["bill gates", "microsoft kisne"], answer: "🪟 **Microsoft:** Duniya ke zyadatar computers mein chalne wala 'Windows' operating system Microsoft ne banaya hai, jiski shuruat mahan coder Bill Gates ne ki thi." },
+
+  // --- Batch 36: Class 10 SST - Civics & Constitution ---
+  { keywords: ["mool adhikar", "fundamental rights", "mauleek adhikar"], answer: "📜 **Fundamental Rights:** Bharat ke Samvidhan ne har nagrik ko 6 Mool Adhikar (Fundamental Rights) diye hain. Jisme Samanta ka adhikar (Right to Equality) aur Azadi ka adhikar (Right to Freedom) sabse mukhya hain." },
+  { keywords: ["loktantra", "democracy", "prajatantra"], answer: "🗳️ **Loktantra (Democracy):** Loktantra ka sabse aasan matlab hai—'Janta ka, Janta ke dwara, aur Janta ke liye shasan' (Of the people, by the people, for the people). Yahan neta chunav (election) se bante hain." },
+  { keywords: ["supreme court", "sabse badi adalat", "uchchatam nyayalaya"], answer: "⚖️ **Supreme Court:** New Delhi mein sthit Supreme Court Bharat ki sabse badi adalat hai. Iska faisla pure desh mein aakhiri aur sabko manne wala hota hai." },
+  { keywords: ["panchayat", "sarpanch", "gram sabha"], answer: "🏘️ **Gram Panchayat:** Gaon ke vikas aur chote jhagdo ko suljhane ke liye Gram Panchayat hoti hai, jiska mukhiya 'Sarpanch' hota hai. Yeh Bharat ke loktantra ki sabse pehli aur zaroori seedhi hai." },
 ];
 
 function smartSearch(input: string, lang: Lang): string {
