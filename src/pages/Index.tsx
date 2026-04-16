@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { PanelLeft, Wheat, Volume2, VolumeX, Tractor, Settings } from "lucide-react";
+import { PanelLeft, Wheat, Volume2, VolumeX, Tractor, Settings, ScanLine } from "lucide-react";
 import ChatMessage from "@/components/ChatMessage";
 import ChatInput from "@/components/ChatInput";
 import ChatSidebar from "@/components/ChatSidebar";
 import CropCalculator from "@/components/CropCalculator";
+import CropDashboard from "@/components/CropDashboard";
+import CropScannerModal from "@/components/CropScannerModal";
 import TypingIndicator from "@/components/TypingIndicator";
 import FloatingControlPanel from "@/components/FloatingControlPanel";
 import SuggestionChips from "@/components/SuggestionChips";
@@ -57,6 +59,7 @@ const Index = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [cropCalcOpen, setCropCalcOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [scannerOpen, setScannerOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const activeSession = sessions.find((s) => s.id === activeSessionId);
 
@@ -241,6 +244,9 @@ const Index = () => {
         </div>
       </header>
 
+      {/* Crop Dashboard */}
+      <CropDashboard lang={lang} />
+
       {/* Messages */}
       <div ref={scrollRef} className="relative z-10 flex-1 overflow-y-auto scrollbar-thin">
         <div className="max-w-3xl mx-auto py-4">
@@ -259,7 +265,18 @@ const Index = () => {
         <div className="flex justify-center">
           <FloatingControlPanel onVoiceResult={handleSend} onLocationDetect={handleBotMessage} lang={lang} />
         </div>
-        <ChatInput onSend={handleSend} disabled={isLoading} lang={lang} />
+        <div className="max-w-3xl mx-auto px-4 flex gap-2">
+          <div className="flex-1">
+            <ChatInput onSend={handleSend} disabled={isLoading} lang={lang} />
+          </div>
+          <button
+            onClick={() => setScannerOpen(true)}
+            className="flex-shrink-0 self-end mb-2 h-[42px] w-[42px] rounded-xl bg-secondary/15 neon-border-green flex items-center justify-center hover:bg-secondary/25 transition-colors"
+            title="Crop Scanner"
+          >
+            <ScanLine className="h-5 w-5 text-green-india" />
+          </button>
+        </div>
       </div>
 
       {/* Footer */}
@@ -270,6 +287,7 @@ const Index = () => {
       </div>
 
       <CropCalculator open={cropCalcOpen} onClose={() => setCropCalcOpen(false)} lang={lang} />
+      <CropScannerModal open={scannerOpen} onClose={() => setScannerOpen(false)} onSymptomSelect={handleSend} lang={lang} />
       <ProfileSetupModal open={showOnboarding} onSave={handleProfileSave} currentLang={lang} />
       <ApiKeyModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
