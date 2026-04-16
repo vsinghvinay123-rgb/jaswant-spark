@@ -455,9 +455,20 @@ const kisanTechGK: KBEntry[] = [
   { pattern: /khaira|patte safed|zinc ki kami|growth ruk gayi|badwar/i, answers: { Hinglish: "🩺 **Pro Fasal Doctor (Zinc Deficiency):** Agar poudhe ki growth ruk gayi hai aur naye patte safed/peele nikal rahe hain, toh yeh 'Khaira Rog' (Zinc ki kami) hai. Naye kisan isme DAP dal kar paise barbad karte hain. Aapko sirf 5 kg 'Zinc Sulphate' (21%) prati acre dalna hai. Fasal wapas lahlaha uthegi!", English: "🩺 **Pro Crop Doctor (Zinc Deficiency):** If plant growth stops and new leaves turn white/yellow, it is 'Khaira Disease' (Zinc deficiency). Don't waste money on DAP. Just apply 5 kg of 'Zinc Sulphate' (21%) per acre. The crop will thrive again!", Hindi: "🩺 **प्रो फसल डॉक्टर (जिंक की कमी):** अगर पौधे की ग्रोथ रुक गई है और नए पत्ते सफेद हो रहे हैं, तो यह 'खैरा रोग' (जिंक की कमी) है। इसमें DAP डालकर पैसे बर्बाद न करें। सिर्फ 5 किलो 'जिंक सल्फेट' (21%) प्रति एकड़ डालें।", Marwadi: "🩺 **प्रो फसल डॉक्टर (जिंक री कमी):** जे पोधै री बड़वार रुक ग्यी है और नूवा पत्ता धोळा हो रैया है, तो ओ 'खैरा रोग' (जिंक री कमी) है। ईं में DAP घाल'र पईसा खराब ना करो। खाली 5 किलो 'जिंक सल्फेट' (21%) एक बीघा में घालो, फसल पाछी चोखी हो जावैली सा!" } },
 ];
 
-function smartSearch(input: string, lang: Lang): string {
+function smartSearch(input: string, lang: Lang, cropContext?: string): string {
   const q = input.toLowerCase();
   const t = UI_TEXT[lang];
+
+  // Crop-context-aware response
+  if (cropContext && /meri fasal|ab kya dalu|kya karu|what should|crop advice|fasal mein|अब क्या/i.test(q)) {
+    const cropMatch = cropContext.match(/crop: (\w+), Age: (\d+)/);
+    if (cropMatch) {
+      const [, cropName, ageStr] = cropMatch;
+      const age = parseInt(ageStr);
+      const advice = getCropAdvice(cropName, age, lang);
+      return t.botPrefix + advice;
+    }
+  }
 
   // Land-based crop calculation (priority check)
   const landMatch = q.match(/(\d+)\s*(acre|bigha|hectare)/);
@@ -505,6 +516,41 @@ function smartSearch(input: string, lang: Lang): string {
   return t.fallback;
 }
 
+function getCropAdvice(crop: string, age: number, lang: Lang): string {
+  const isHindi = lang === "hi" || lang === "hinglish" || lang === "marwadi";
+  const adviceMap: Record<string, { stage: string; advice: string }[]> = {
+    wheat: [
+      { stage: "0-20", advice: isHindi ? "गेहूं की बुवाई के बाद पहले 20 दिन — खरपतवार पर नजर रखें। अभी सिंचाई की जरूरत नहीं।" : "Wheat first 20 days — watch for weeds. No irrigation needed yet." },
+      { stage: "21-40", advice: isHindi ? "गेहूं 21-40 दिन — पहली सिंचाई (CRI Stage) करें और यूरिया @ 50 kg/एकड़ डालें।" : "Wheat 21-40 days — Do first irrigation (CRI Stage) and apply Urea @ 50 kg/acre." },
+      { stage: "41-70", advice: isHindi ? "गेहूं 41-70 दिन — दूसरी सिंचाई करें। फसल की ग्रोथ तेज होगी।" : "Wheat 41-70 days — Do second irrigation. Crop growth will accelerate." },
+      { stage: "71+", advice: isHindi ? "गेहूं 70+ दिन — बालियां निकल रही हैं। तीसरी सिंचाई करें और कीटनाशक का ध्यान रखें।" : "Wheat 70+ days — Ears forming. Do third irrigation and watch for pests." },
+    ],
+    mustard: [
+      { stage: "0-25", advice: isHindi ? "सरसों के पहले 25 दिन — खरपतवार निकालें।" : "Mustard first 25 days — remove weeds." },
+      { stage: "26-50", advice: isHindi ? "सरसों 26-50 दिन — पहली सिंचाई और यूरिया टॉप ड्रेसिंग करें।" : "Mustard 26-50 days — first irrigation and Urea top dressing." },
+      { stage: "51+", advice: isHindi ? "सरसों 50+ दिन — फूल आ रहे हैं। Aphid (माहू) कीड़े पर नजर रखें।" : "Mustard 50+ days — flowering stage. Watch for Aphids." },
+    ],
+    bajra: [
+      { stage: "0-20", advice: isHindi ? "बाजरा पहले 20 दिन — पतला करें (thinning)। पानी की जरूरत नहीं।" : "Bajra first 20 days — do thinning. No water needed." },
+      { stage: "21-45", advice: isHindi ? "बाजरा 21-45 दिन — यूरिया की टॉप ड्रेसिंग करें।" : "Bajra 21-45 days — apply Urea top dressing." },
+      { stage: "46+", advice: isHindi ? "बाजरा 45+ दिन — सिट्टे आ रहे हैं। पक्षियों से बचाव करें।" : "Bajra 45+ days — ears forming. Protect from birds." },
+    ],
+  };
+
+  const stages = adviceMap[crop.toLowerCase()] || adviceMap["wheat"];
+  let advice = stages[stages.length - 1].advice;
+  for (const s of stages) {
+    const [min, max] = s.stage.replace("+", "-9999").split("-").map(Number);
+    if (age >= min && age <= (max || 9999)) {
+      advice = s.stage.includes("+") && age >= min ? s.advice : age <= max ? s.advice : advice;
+      break;
+    }
+  }
+
+  const cropDisplay = crop.charAt(0).toUpperCase() + crop.slice(1);
+  return `🩺 **Fasal Doctor — ${cropDisplay} (${age} ${isHindi ? "दिन" : "Days"}):**\n\nDetection: ${cropDisplay} crop at ${age} days.\nAction: ${advice}\n\n✅ *Context-aware advice from your saved crop data.*`;
+}
+
 export async function sendMessage(
   messages: Message[],
   lang: Lang,
@@ -513,10 +559,22 @@ export async function sendMessage(
   const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
   if (!lastUserMsg) return UI_TEXT[lang].fallback;
 
+  // Get crop context from localStorage
+  let cropContext = "";
+  try {
+    const saved = localStorage.getItem("bharat-crop-data");
+    if (saved) {
+      const data = JSON.parse(saved);
+      const age = Math.max(0, Math.floor((Date.now() - new Date(data.sowingDate).getTime()) / (1000 * 60 * 60 * 24)));
+      const CROPS: Record<string, string> = { wheat: "Wheat", mustard: "Mustard", bajra: "Bajra", cotton: "Cotton", aloevera: "Aloe Vera", guar: "Guar", moong: "Moong", chana: "Chana" };
+      cropContext = `[User's active crop: ${CROPS[data.crop] || data.crop}, Age: ${age} days]`;
+    }
+  } catch { /* */ }
+
   // Simulate slight delay for natural feel
   await new Promise((r) => setTimeout(r, 400 + Math.random() * 600));
 
-  return smartSearch(lastUserMsg.content, lang);
+  return smartSearch(lastUserMsg.content, lang, cropContext);
 }
 
 export function generateId(): string {

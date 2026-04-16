@@ -5,6 +5,7 @@ import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Copy, Check, Bot, User } from "lucide-react";
 import { motion } from "framer-motion";
 import WhatsAppShare from "./WhatsAppShare";
+import PrescriptionCard from "./PrescriptionCard";
 import type { Message } from "@/lib/ai-service";
 import type { Lang } from "@/lib/i18n";
 
@@ -41,9 +42,14 @@ const CodeBlock = ({ language, value }: { language: string; value: string }) => 
 const isDetailedResponse = (content: string) =>
   content.includes("##") || content.includes("**") || content.length > 200;
 
+const isFasalDoctorResponse = (content: string) =>
+  /fasal doctor|crop doctor|फसल डॉक्टर|pro fasal|pro crop|scan complete|स्कैन पूर्ण/i.test(content) &&
+  /detection|diagnosis|solution|action|treatment|ilaj|पहचान|इलाज|spray|दवाई|समाधान/i.test(content);
+
 const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
   const isUser = message.role === "user";
   const showWhatsApp = !isUser && message.id !== "welcome" && isDetailedResponse(message.content);
+  const showPrescription = !isUser && isFasalDoctorResponse(message.content);
 
   return (
     <motion.div
@@ -66,6 +72,8 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
         }`}>
           {isUser ? (
             <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          ) : showPrescription ? (
+            <PrescriptionCard content={message.content} />
           ) : (
             <div className="prose prose-sm prose-invert max-w-none text-foreground">
               <ReactMarkdown
