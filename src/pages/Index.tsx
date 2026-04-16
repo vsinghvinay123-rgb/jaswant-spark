@@ -265,13 +265,13 @@ const Index = () => {
         <div className="flex justify-center">
           <FloatingControlPanel onVoiceResult={handleSend} onLocationDetect={handleBotMessage} lang={lang} />
         </div>
-        <div className="max-w-3xl mx-auto px-4 flex gap-2">
+        <div className="max-w-3xl mx-auto px-4 flex items-end gap-2">
           <div className="flex-1">
             <ChatInput onSend={handleSend} disabled={isLoading} lang={lang} />
           </div>
           <button
             onClick={() => setScannerOpen(true)}
-            className="flex-shrink-0 self-end mb-2 h-[42px] w-[42px] rounded-xl bg-secondary/15 neon-border-green flex items-center justify-center hover:bg-secondary/25 transition-colors"
+            className="flex-shrink-0 mb-2 h-[42px] w-[42px] rounded-xl bg-secondary/15 neon-border-green flex items-center justify-center hover:bg-secondary/25 transition-colors"
             title="Crop Scanner"
           >
             <ScanLine className="h-5 w-5 text-green-india" />
