@@ -1,11 +1,12 @@
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Copy, Check, Bot, User } from "lucide-react";
+import { Copy, Check, Bot, User, Volume2, VolumeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import WhatsAppShare from "./WhatsAppShare";
 import PrescriptionCard from "./PrescriptionCard";
+import { speakText } from "@/lib/speech";
 import type { Message } from "@/lib/ai-service";
 import type { Lang } from "@/lib/i18n";
 
@@ -51,6 +52,24 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
   const showWhatsApp = !isUser && message.id !== "welcome" && isDetailedResponse(message.content);
   const showPrescription = !isUser && isFasalDoctorResponse(message.content);
 
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsSpeaking(window.speechSynthesis?.speaking || false);
+    const interval = setInterval(check, 300);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleSpeak = () => {
+    if (isSpeaking) {
+      window.speechSynthesis?.cancel();
+      setIsSpeaking(false);
+    } else {
+      speakText(message.content, lang);
+      setIsSpeaking(true);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -64,7 +83,7 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
         </div>
       )}
 
-      <div className={`max-w-[80%] ${isUser ? "" : ""}`}>
+      <div className={`max-w-[80%]`}>
         <div className={`rounded-2xl px-4 py-3 ${
           isUser
             ? "bg-primary/20 text-foreground neon-border-orange"
@@ -105,7 +124,30 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
             </div>
           )}
         </div>
-        {showWhatsApp && <WhatsAppShare text={message.content} lang={lang} />}
+
+        {/* Action row: TTS + WhatsApp */}
+        {!isUser && message.id !== "welcome" && (
+          <div className="flex items-center gap-2 mt-1.5 px-1">
+            <button
+              onClick={handleSpeak}
+              className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-heading transition-all ${
+                isSpeaking
+                  ? "bg-saffron/20 text-saffron"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              }`}
+            >
+              {isSpeaking ? (
+                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 0.8 }}>
+                  <VolumeOff className="h-3.5 w-3.5" />
+                </motion.div>
+              ) : (
+                <Volume2 className="h-3.5 w-3.5" />
+              )}
+              {isSpeaking ? "Stop" : "Listen"}
+            </button>
+            {showWhatsApp && <WhatsAppShare text={message.content} lang={lang} />}
+          </div>
+        )}
       </div>
 
       {isUser && (
