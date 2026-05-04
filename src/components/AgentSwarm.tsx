@@ -7,7 +7,8 @@ interface Agent {
   name: string;
   task: string;
   delay: number;
-  color: string; // tailwind text/bg color base
+  iconBg: string;
+  iconColor: string;
   badge: string;
 }
 
@@ -17,7 +18,8 @@ const AGENTS: Agent[] = [
     name: "Agronomy Agent",
     task: "Scanning for biological threats…",
     delay: 500,
-    color: "green-india",
+    iconBg: "bg-secondary/15",
+    iconColor: "text-green-india",
     badge: "bg-secondary/20 text-green-india border-secondary/40",
   },
   {
@@ -25,7 +27,8 @@ const AGENTS: Agent[] = [
     name: "Climate Agent",
     task: "Analyzing local Churu offline weather logic…",
     delay: 1000,
-    color: "navy",
+    iconBg: "bg-navy/15",
+    iconColor: "text-navy",
     badge: "bg-navy/20 text-navy border-navy/40",
   },
   {
@@ -33,7 +36,8 @@ const AGENTS: Agent[] = [
     name: "Data Agent",
     task: "Structuring multi-lingual output…",
     delay: 1500,
-    color: "saffron",
+    iconBg: "bg-primary/15",
+    iconColor: "text-saffron",
     badge: "bg-primary/20 text-saffron border-primary/40",
   },
 ];
@@ -100,8 +104,8 @@ const AgentSwarm = memo(() => {
                   : "bg-muted/30 border-border"
               }`}
             >
-              <div className={`relative w-8 h-8 rounded-lg flex items-center justify-center bg-${agent.color}/15`}>
-                <Icon className={`h-4 w-4 text-${agent.color}`} />
+              <div className={`relative w-8 h-8 rounded-lg flex items-center justify-center ${agent.iconBg}`}>
+                <Icon className={`h-4 w-4 ${agent.iconColor}`} />
                 {!isDone && (
                   <motion.div
                     className="absolute inset-0 rounded-lg border-2 border-saffron/30"
