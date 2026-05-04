@@ -7,6 +7,7 @@ import CropCalculator from "@/components/CropCalculator";
 import CropDashboard from "@/components/CropDashboard";
 import CropScannerModal from "@/components/CropScannerModal";
 import TypingIndicator from "@/components/TypingIndicator";
+import AgentSwarm from "@/components/AgentSwarm";
 import FloatingControlPanel from "@/components/FloatingControlPanel";
 import SuggestionChips from "@/components/SuggestionChips";
 import SplashScreen from "@/components/SplashScreen";
@@ -253,7 +254,7 @@ const Index = () => {
           {activeSession?.messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg} lang={lang} />
           ))}
-          {isLoading && <TypingIndicator />}
+          {isLoading && <AgentSwarm />}
         </div>
       </div>
 
