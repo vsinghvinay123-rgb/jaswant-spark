@@ -5,7 +5,7 @@ import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Copy, Check, Bot, User, Volume2, VolumeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import WhatsAppShare from "./WhatsAppShare";
-import PrescriptionCard from "./PrescriptionCard";
+import TreatmentMatrix from "./TreatmentMatrix";
 import { speakText } from "@/lib/speech";
 import type { Message } from "@/lib/ai-service";
 import type { Lang } from "@/lib/i18n";
@@ -92,7 +92,7 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
           {isUser ? (
             <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
           ) : showPrescription ? (
-            <PrescriptionCard content={message.content} />
+            <TreatmentMatrix content={message.content} />
           ) : (
             <div className="prose prose-sm prose-invert max-w-none text-foreground">
               <ReactMarkdown
