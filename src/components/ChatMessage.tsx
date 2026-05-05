@@ -6,6 +6,12 @@ import { Copy, Check, Bot, User, Volume2, VolumeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import WhatsAppShare from "./WhatsAppShare";
 import TreatmentMatrix from "./TreatmentMatrix";
+import {
+  ClinicalReport,
+  InvalidCropCard,
+  isCropReportResponse,
+  isInvalidCropResponse,
+} from "./ClinicalReport";
 import { speakText } from "@/lib/speech";
 import type { Message } from "@/lib/ai-service";
 import type { Lang } from "@/lib/i18n";
@@ -49,8 +55,12 @@ const isFasalDoctorResponse = (content: string) =>
 
 const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
   const isUser = message.role === "user";
-  const showWhatsApp = !isUser && message.id !== "welcome" && isDetailedResponse(message.content);
-  const showPrescription = !isUser && isFasalDoctorResponse(message.content);
+  const showInvalid = !isUser && isInvalidCropResponse(message.content);
+  const showClinical = !isUser && isCropReportResponse(message.content);
+  const showWhatsApp =
+    !isUser && message.id !== "welcome" && (showClinical || isDetailedResponse(message.content));
+  const showPrescription =
+    !isUser && !showClinical && !showInvalid && isFasalDoctorResponse(message.content);
 
   const [isSpeaking, setIsSpeaking] = useState(false);
 
@@ -91,6 +101,10 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
         }`}>
           {isUser ? (
             <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          ) : showInvalid ? (
+            <InvalidCropCard content={message.content} />
+          ) : showClinical ? (
+            <ClinicalReport content={message.content} />
           ) : showPrescription ? (
             <TreatmentMatrix content={message.content} />
           ) : (
