@@ -276,7 +276,7 @@ export const ClinicalReport = memo(({ content }: ClinicalReportProps) => {
               className="space-y-1.5"
             >
               <div className="flex items-center gap-1.5">
-                <Icon className={`h-3.5 w-3.5 text-${sec.color}`} />
+                <Icon className="h-3.5 w-3.5 text-saffron" />
                 <p className="text-[10px] font-heading tracking-widest text-muted-foreground uppercase">
                   {sec.title}
                 </p>
