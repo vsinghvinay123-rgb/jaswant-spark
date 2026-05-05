@@ -101,6 +101,10 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
         }`}>
           {isUser ? (
             <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          ) : showInvalid ? (
+            <InvalidCropCard content={message.content} />
+          ) : showClinical ? (
+            <ClinicalReport content={message.content} />
           ) : showPrescription ? (
             <TreatmentMatrix content={message.content} />
           ) : (
