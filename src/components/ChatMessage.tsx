@@ -6,6 +6,12 @@ import { Copy, Check, Bot, User, Volume2, VolumeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import WhatsAppShare from "./WhatsAppShare";
 import TreatmentMatrix from "./TreatmentMatrix";
+import {
+  ClinicalReport,
+  InvalidCropCard,
+  isCropReportResponse,
+  isInvalidCropResponse,
+} from "./ClinicalReport";
 import { speakText } from "@/lib/speech";
 import type { Message } from "@/lib/ai-service";
 import type { Lang } from "@/lib/i18n";
