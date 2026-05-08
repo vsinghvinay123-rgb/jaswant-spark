@@ -105,9 +105,40 @@ export function isCropReportResponse(content: string) {
   return /\[CROP_REPORT\]/.test(content);
 }
 
+function extractThinking(raw: string): string | null {
+  const m = raw.match(/<THINKING>([\s\S]*?)<\/THINKING>/i);
+  return m ? m[1].trim() : null;
+}
+
+// ---------- Collapsible AI reasoning ----------
+const ThinkingPanel = ({ thinking }: { thinking: string }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-xl border border-border bg-muted/30 overflow-hidden mb-2">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-heading tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <span className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-india animate-pulse" />
+          AI Analysis · Chain of Thought
+        </span>
+        <span>{open ? "−" : "+"}</span>
+      </button>
+      {open && (
+        <pre className="px-3 pb-3 text-[10px] text-foreground/80 font-mono whitespace-pre-wrap leading-relaxed">
+          {thinking}
+        </pre>
+      )}
+    </div>
+  );
+};
+
 // ---------- INVALID card ----------
 export const InvalidCropCard = memo(({ content }: { content: string }) => {
+  const thinking = extractThinking(content);
   const text = content
+    .replace(/<THINKING>[\s\S]*?<\/THINKING>/gi, "")
     .replace(/\[INVALID_CROP\]/g, "")
     .replace(/\*\*/g, "")
     .replace(/⚠️/g, "")
@@ -125,6 +156,7 @@ export const InvalidCropCard = memo(({ content }: { content: string }) => {
         </p>
       </div>
       <div className="p-4 space-y-3">
+        {thinking && <ThinkingPanel thinking={thinking} />}
         <p className="text-sm text-foreground leading-relaxed">{text}</p>
         <div className="px-3 py-2 rounded-lg bg-muted/40 border border-border">
           <p className="text-[10px] font-heading tracking-widest text-muted-foreground uppercase mb-1">
