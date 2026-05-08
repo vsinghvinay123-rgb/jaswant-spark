@@ -255,6 +255,7 @@ const Index = () => {
           {activeSession?.messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg} lang={lang} />
           ))}
+          {(activeSession?.messages.length ?? 0) <= 1 && <FasalDoctorHighlight lang={lang} />}
           {isLoading && <AgentSwarm />}
         </div>
       </div>
