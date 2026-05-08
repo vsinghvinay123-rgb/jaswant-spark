@@ -10,6 +10,7 @@ import TypingIndicator from "@/components/TypingIndicator";
 import AgentSwarm from "@/components/AgentSwarm";
 import FloatingControlPanel from "@/components/FloatingControlPanel";
 import SuggestionChips from "@/components/SuggestionChips";
+import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
 import SplashScreen from "@/components/SplashScreen";
 import ProfileSetupModal from "@/components/ProfileSetupModal";
 import type { UserProfile } from "@/components/ProfileSetupModal";
@@ -254,6 +255,7 @@ const Index = () => {
           {activeSession?.messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg} lang={lang} />
           ))}
+          {(activeSession?.messages.length ?? 0) <= 1 && <FasalDoctorHighlight lang={lang} />}
           {isLoading && <AgentSwarm />}
         </div>
       </div>
