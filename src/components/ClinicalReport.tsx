@@ -12,8 +12,11 @@ interface ClinicalReportProps {
 type ReportSection = { title: string; icon: any; bullets: string[]; color: string };
 
 function parseReport(raw: string) {
-  // Strip the [CROP_REPORT] tag
-  const body = raw.replace(/\[CROP_REPORT\]/g, "").trim();
+  // Strip the [CROP_REPORT] tag and any <THINKING>…</THINKING> reasoning block
+  const body = raw
+    .replace(/<THINKING>[\s\S]*?<\/THINKING>/gi, "")
+    .replace(/\[CROP_REPORT\]/g, "")
+    .trim();
 
   // Severity
   let severity: "critical" | "warning" | "healthy" = "warning";
