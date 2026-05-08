@@ -224,6 +224,7 @@ export const ClinicalReport = memo(({ content }: ClinicalReportProps) => {
       </div>
 
       <div className="p-4 space-y-4">
+        {extractThinking(content) && <ThinkingPanel thinking={extractThinking(content)!} />}
         {/* Vitality + Risk index */}
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded-xl p-3 bg-muted/30 border border-border space-y-1">
