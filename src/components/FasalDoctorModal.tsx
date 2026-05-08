@@ -332,13 +332,29 @@ const LABELS: Record<Lang, {
   },
 };
 
+// --- Chain-of-Thought reasoning blocks (hidden from user, stripped before render) ---
+const THINKING_REAL = `<THINKING>
+1. Material Check: Surface texture is organic and biological — natural cellulose pattern detected, no plastic gloss or fabric weave.
+2. Environment Check: Plant is rooted in natural agricultural soil/field setting consistent with crop cultivation.
+3. Imperfection Check: Natural biological flaws present — slight dirt, asymmetric leaves, micro-bite marks. Not 'too perfect'.
+4. Final Conclusion: REAL BIOLOGICAL CROP — proceed with [CROP_REPORT].
+</THINKING>`;
+
+const THINKING_FAKE = `<THINKING>
+1. Material Check: Surface shows uniform gloss / fabric texture / plastic appearance — not organic.
+2. Environment Check: Setting is decorative (indoor pot / desk / studio), not natural agricultural soil.
+3. Imperfection Check: Geometry is 'too perfect' — no dirt, no bite marks, no biological asymmetry.
+4. Final Conclusion: FAKE / NON-CROP — output [INVALID_CROP].
+</THINKING>`;
+
 function buildClinicalReport(lang: Lang) {
   const r = REPORTS[Math.floor(Math.random() * REPORTS.length)];
   const L = LABELS[lang];
   const sevWord = r.severity === "CRITICAL" ? L.critical : r.severity === "WARNING" ? L.warning : L.healthy;
   const sevEmoji = r.severity === "CRITICAL" ? "🔴" : r.severity === "WARNING" ? "🟡" : "🟢";
 
-  return `[CROP_REPORT]
+  return `${THINKING_REAL}
+[CROP_REPORT]
 
 🩺 **${L.reportTitle} — ${r.title[lang]}**
 
@@ -390,7 +406,7 @@ const INVALID_MSG: Record<Lang, { nonCrop: string; fake: string }> = {
 
 function buildInvalidReport(lang: Lang, kind: "non_crop" | "fake_plant") {
   const m = INVALID_MSG[lang];
-  return `[INVALID_CROP]\n\n${kind === "fake_plant" ? m.fake : m.nonCrop}`;
+  return `${THINKING_FAKE}\n[INVALID_CROP]\n\n${kind === "fake_plant" ? m.fake : m.nonCrop}`;
 }
 
 const FasalDoctorModal = ({ open, onClose, onResult, lang }: FasalDoctorModalProps) => {

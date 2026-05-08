@@ -1,7 +1,8 @@
-import { memo, useState } from "react";
+import { memo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { AlertTriangle, Download, FileText, FlaskConical, Leaf, Microscope, Globe2, IndianRupee, Activity, CheckSquare } from "lucide-react";
 import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 interface ClinicalReportProps {
   content: string;
@@ -11,8 +12,11 @@ interface ClinicalReportProps {
 type ReportSection = { title: string; icon: any; bullets: string[]; color: string };
 
 function parseReport(raw: string) {
-  // Strip the [CROP_REPORT] tag
-  const body = raw.replace(/\[CROP_REPORT\]/g, "").trim();
+  // Strip the [CROP_REPORT] tag and any <THINKING>…</THINKING> reasoning block
+  const body = raw
+    .replace(/<THINKING>[\s\S]*?<\/THINKING>/gi, "")
+    .replace(/\[CROP_REPORT\]/g, "")
+    .trim();
 
   // Severity
   let severity: "critical" | "warning" | "healthy" = "warning";
@@ -58,87 +62,39 @@ function parseReport(raw: string) {
   return { severity, sevLabel, vitality, yieldLoss: yieldMatch?.[1], actionWindow: actionMatch?.[1], spread: spreadMatch?.[1], sections, title };
 }
 
-// ---------- PDF ----------
-function downloadPdf(raw: string, parsed: ReturnType<typeof parseReport>) {
-  const doc = new jsPDF({ unit: "pt", format: "a4" });
-  const W = doc.internal.pageSize.getWidth();
-  const M = 40;
-  let y = 50;
+// ---------- PDF (html2canvas → jsPDF, Unicode-safe) ----------
+async function downloadPdfFromElement(el: HTMLElement) {
+  const canvas = await html2canvas(el, {
+    scale: 2,
+    useCORS: true,
+    logging: false,
+    backgroundColor: "#0b0f17",
+    // @ts-ignore — letterRendering is a valid html2canvas option
+    letterRendering: true,
+  });
+  const imgData = canvas.toDataURL("image/jpeg", 0.98);
 
-  // Header band
-  doc.setFillColor(255, 153, 51);
-  doc.rect(0, 0, W, 8, "F");
-  doc.setFillColor(19, 136, 8);
-  doc.rect(0, 8, W, 4, "F");
+  const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+  const margin = 10;
+  const imgW = pageW - margin * 2;
+  const imgH = (canvas.height * imgW) / canvas.width;
 
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(18);
-  doc.setTextColor(20, 20, 20);
-  doc.text("BHARAT AI — CLINICAL FASAL REPORT", M, y);
-  y += 18;
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.setTextColor(110, 110, 110);
-  doc.text(`Generated: ${new Date().toLocaleString()}`, M, y);
-  y += 10;
-  doc.text("Supreme Agronomy Diagnostic — ICAR-aligned Protocol", M, y);
-  y += 22;
+  let heightLeft = imgH;
+  let position = margin;
 
-  // Severity box
-  const sevColors: Record<string, [number, number, number]> = {
-    critical: [220, 38, 38], warning: [234, 153, 22], healthy: [34, 139, 34],
-  };
-  const [r, g, b] = sevColors[parsed.severity];
-  doc.setDrawColor(r, g, b);
-  doc.setFillColor(r, g, b, 0.08 as any);
-  doc.roundedRect(M, y, W - M * 2, 60, 6, 6, "S");
-  doc.setFontSize(11);
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(r, g, b);
-  doc.text(`SEVERITY: ${parsed.sevLabel}`, M + 12, y + 20);
-  doc.setTextColor(40, 40, 40);
-  doc.setFont("helvetica", "normal");
-  doc.text(`Crop Vitality: ${parsed.vitality}%`, M + 12, y + 38);
-  if (parsed.spread) doc.text(`Spread Rate: ${parsed.spread}`, M + 12, y + 52);
-  if (parsed.actionWindow) doc.text(`Action Window: ${parsed.actionWindow}`, M + 220, y + 38);
-  if (parsed.yieldLoss) doc.text(`Est. Yield Loss: ${parsed.yieldLoss}`, M + 220, y + 52);
-  y += 78;
+  pdf.addImage(imgData, "JPEG", margin, position, imgW, imgH);
+  heightLeft -= pageH - margin * 2;
 
-  // Sections
-  doc.setFontSize(11);
-  for (const sec of parsed.sections) {
-    if (y > 720) { doc.addPage(); y = 50; }
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(19, 96, 8);
-    doc.text(sec.title.toUpperCase(), M, y);
-    y += 6;
-    doc.setDrawColor(200, 200, 200);
-    doc.line(M, y, W - M, y);
-    y += 14;
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(40, 40, 40);
-    for (const bullet of sec.bullets) {
-      const lines = doc.splitTextToSize(`• ${bullet.replace(/\*\*/g, "")}`, W - M * 2 - 10);
-      for (const line of lines) {
-        if (y > 770) { doc.addPage(); y = 50; }
-        doc.text(line, M + 4, y);
-        y += 13;
-      }
-    }
-    y += 10;
+  while (heightLeft > 0) {
+    position = margin - (imgH - heightLeft);
+    pdf.addPage();
+    pdf.addImage(imgData, "JPEG", margin, position, imgW, imgH);
+    heightLeft -= pageH - margin * 2;
   }
 
-  // Footer
-  const pages = doc.getNumberOfPages();
-  for (let i = 1; i <= pages; i++) {
-    doc.setPage(i);
-    doc.setFontSize(8);
-    doc.setTextColor(140, 140, 140);
-    doc.text("🇮🇳  Bharat AI · Created by Jaswant · Offline Diagnostic Engine", M, 820);
-    doc.text(`Page ${i} / ${pages}`, W - M - 40, 820);
-  }
-
-  doc.save(`bharat-ai-fasal-report-${Date.now()}.pdf`);
+  pdf.save(`Fasal_Doctor_Report_${Date.now()}.pdf`);
 }
 
 // ---------- detection helpers ----------
@@ -149,9 +105,40 @@ export function isCropReportResponse(content: string) {
   return /\[CROP_REPORT\]/.test(content);
 }
 
+function extractThinking(raw: string): string | null {
+  const m = raw.match(/<THINKING>([\s\S]*?)<\/THINKING>/i);
+  return m ? m[1].trim() : null;
+}
+
+// ---------- Collapsible AI reasoning ----------
+const ThinkingPanel = ({ thinking }: { thinking: string }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-xl border border-border bg-muted/30 overflow-hidden mb-2">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-heading tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <span className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-india animate-pulse" />
+          AI Analysis · Chain of Thought
+        </span>
+        <span>{open ? "−" : "+"}</span>
+      </button>
+      {open && (
+        <pre className="px-3 pb-3 text-[10px] text-foreground/80 font-mono whitespace-pre-wrap leading-relaxed">
+          {thinking}
+        </pre>
+      )}
+    </div>
+  );
+};
+
 // ---------- INVALID card ----------
 export const InvalidCropCard = memo(({ content }: { content: string }) => {
+  const thinking = extractThinking(content);
   const text = content
+    .replace(/<THINKING>[\s\S]*?<\/THINKING>/gi, "")
     .replace(/\[INVALID_CROP\]/g, "")
     .replace(/\*\*/g, "")
     .replace(/⚠️/g, "")
@@ -169,6 +156,7 @@ export const InvalidCropCard = memo(({ content }: { content: string }) => {
         </p>
       </div>
       <div className="p-4 space-y-3">
+        {thinking && <ThinkingPanel thinking={thinking} />}
         <p className="text-sm text-foreground leading-relaxed">{text}</p>
         <div className="px-3 py-2 rounded-lg bg-muted/40 border border-border">
           <p className="text-[10px] font-heading tracking-widest text-muted-foreground uppercase mb-1">
@@ -188,20 +176,29 @@ InvalidCropCard.displayName = "InvalidCropCard";
 export const ClinicalReport = memo(({ content }: ClinicalReportProps) => {
   const parsed = parseReport(content);
   const [downloaded, setDownloaded] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const reportRef = useRef<HTMLDivElement>(null);
 
   const sevColor =
     parsed.severity === "critical" ? "hsl(var(--destructive))"
       : parsed.severity === "warning" ? "hsl(var(--saffron))"
         : "hsl(var(--green-india))";
 
-  const handleDownload = () => {
-    downloadPdf(content, parsed);
-    setDownloaded(true);
-    setTimeout(() => setDownloaded(false), 2500);
+  const handleDownload = async () => {
+    if (!reportRef.current || busy) return;
+    setBusy(true);
+    try {
+      await downloadPdfFromElement(reportRef.current);
+      setDownloaded(true);
+      setTimeout(() => setDownloaded(false), 2500);
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
     <motion.div
+      ref={reportRef}
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.35 }}
@@ -227,6 +224,7 @@ export const ClinicalReport = memo(({ content }: ClinicalReportProps) => {
       </div>
 
       <div className="p-4 space-y-4">
+        {extractThinking(content) && <ThinkingPanel thinking={extractThinking(content)!} />}
         {/* Vitality + Risk index */}
         <div className="grid grid-cols-2 gap-2">
           <div className="rounded-xl p-3 bg-muted/30 border border-border space-y-1">
@@ -310,7 +308,7 @@ export const ClinicalReport = memo(({ content }: ClinicalReportProps) => {
             }`}
           >
             <Download className="h-3 w-3" />
-            {downloaded ? "Downloaded ✓" : "Download Full Report (PDF)"}
+            {busy ? "Generating…" : downloaded ? "Downloaded ✓" : "Download Full Report (PDF)"}
           </button>
         </div>
       </div>
