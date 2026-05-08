@@ -272,7 +272,7 @@ export const ClinicalReport = memo(({ content }: ClinicalReportProps) => {
             }`}
           >
             <Download className="h-3 w-3" />
-            {downloaded ? "Downloaded ✓" : "Download Full Report (PDF)"}
+            {busy ? "Generating…" : downloaded ? "Downloaded ✓" : "Download Full Report (PDF)"}
           </button>
         </div>
       </div>
