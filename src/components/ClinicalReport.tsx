@@ -141,20 +141,29 @@ InvalidCropCard.displayName = "InvalidCropCard";
 export const ClinicalReport = memo(({ content }: ClinicalReportProps) => {
   const parsed = parseReport(content);
   const [downloaded, setDownloaded] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const reportRef = useRef<HTMLDivElement>(null);
 
   const sevColor =
     parsed.severity === "critical" ? "hsl(var(--destructive))"
       : parsed.severity === "warning" ? "hsl(var(--saffron))"
         : "hsl(var(--green-india))";
 
-  const handleDownload = () => {
-    downloadPdf(content, parsed);
-    setDownloaded(true);
-    setTimeout(() => setDownloaded(false), 2500);
+  const handleDownload = async () => {
+    if (!reportRef.current || busy) return;
+    setBusy(true);
+    try {
+      await downloadPdfFromElement(reportRef.current);
+      setDownloaded(true);
+      setTimeout(() => setDownloaded(false), 2500);
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
     <motion.div
+      ref={reportRef}
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.35 }}
