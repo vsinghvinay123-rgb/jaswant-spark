@@ -294,6 +294,9 @@ const Index = () => {
         </p>
       </div>
 
+      {/* Legal footer for AdSense compliance */}
+      <LegalFooter />
+
       <CropCalculator open={cropCalcOpen} onClose={() => setCropCalcOpen(false)} lang={lang} />
       <CropScannerModal open={scannerOpen} onClose={() => setScannerOpen(false)} onSymptomSelect={handleSend} lang={lang} />
       <ProfileSetupModal open={showOnboarding} onSave={handleProfileSave} currentLang={lang} />
