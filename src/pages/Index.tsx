@@ -11,6 +11,8 @@ import AgentSwarm from "@/components/AgentSwarm";
 import FloatingControlPanel from "@/components/FloatingControlPanel";
 import SuggestionChips from "@/components/SuggestionChips";
 import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
+import TopAdBanner from "@/components/TopAdBanner";
+import LegalFooter from "@/components/LegalFooter";
 import SplashScreen from "@/components/SplashScreen";
 import ProfileSetupModal from "@/components/ProfileSetupModal";
 import type { UserProfile } from "@/components/ProfileSetupModal";
@@ -246,6 +248,9 @@ const Index = () => {
         </div>
       </header>
 
+      {/* Ultra-thin top AdSense banner */}
+      <TopAdBanner />
+
       {/* Crop Dashboard */}
       <CropDashboard lang={lang} />
 
@@ -288,6 +293,9 @@ const Index = () => {
           🇮🇳 CREATED BY <span className="text-saffron font-bold">JASWANT</span> · OFFLINE & FAST
         </p>
       </div>
+
+      {/* Legal footer for AdSense compliance */}
+      <LegalFooter />
 
       <CropCalculator open={cropCalcOpen} onClose={() => setCropCalcOpen(false)} lang={lang} />
       <CropScannerModal open={scannerOpen} onClose={() => setScannerOpen(false)} onSymptomSelect={handleSend} lang={lang} />
