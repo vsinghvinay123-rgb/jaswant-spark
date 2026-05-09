@@ -1,6 +1,6 @@
-import { memo, useRef, useState } from "react";
+import { memo, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { AlertTriangle, Download, FileText, FlaskConical, Leaf, Microscope, Globe2, IndianRupee, Activity, CheckSquare } from "lucide-react";
+import { AlertTriangle, Download, FileText, FlaskConical, Leaf, Microscope, Globe2, IndianRupee, Activity, Stethoscope, ShieldCheck } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
