@@ -68,7 +68,7 @@ async function downloadPdfFromElement(el: HTMLElement) {
     scale: 2,
     useCORS: true,
     logging: false,
-    backgroundColor: "#0b0f17",
+    backgroundColor: "#ffffff",
     // @ts-ignore — letterRendering is a valid html2canvas option
     letterRendering: true,
   });
@@ -77,7 +77,7 @@ async function downloadPdfFromElement(el: HTMLElement) {
   const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
   const pageW = pdf.internal.pageSize.getWidth();
   const pageH = pdf.internal.pageSize.getHeight();
-  const margin = 10;
+  const margin = 8;
   const imgW = pageW - margin * 2;
   const imgH = (canvas.height * imgW) / canvas.width;
 
@@ -94,7 +94,7 @@ async function downloadPdfFromElement(el: HTMLElement) {
     heightLeft -= pageH - margin * 2;
   }
 
-  pdf.save(`Fasal_Doctor_Report_${Date.now()}.pdf`);
+  pdf.save(`Bharat_AI_Lab_Report_${Date.now()}.pdf`);
 }
 
 // ---------- detection helpers ----------
