@@ -11,6 +11,8 @@ import AgentSwarm from "@/components/AgentSwarm";
 import FloatingControlPanel from "@/components/FloatingControlPanel";
 import SuggestionChips from "@/components/SuggestionChips";
 import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
+import TopAdBanner from "@/components/TopAdBanner";
+import LegalFooter from "@/components/LegalFooter";
 import SplashScreen from "@/components/SplashScreen";
 import ProfileSetupModal from "@/components/ProfileSetupModal";
 import type { UserProfile } from "@/components/ProfileSetupModal";
