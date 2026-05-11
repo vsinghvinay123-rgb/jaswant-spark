@@ -9,7 +9,6 @@ declare global {
 /**
  * Ultra-thin top AdSense banner.
  * Strict height: 60px on mobile, 90px on desktop. Forced horizontal format.
- * Replace data-ad-client / data-ad-slot with your real AdSense IDs.
  */
 const TopAdBanner = () => {
   useEffect(() => {
