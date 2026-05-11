@@ -24,7 +24,7 @@ const TopAdBanner = () => {
       <ins
         className="adsbygoogle"
         style={{ display: "block", width: "100%", height: "100%" }}
-        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+        data-ad-client="ca-pub-1018836158313685"
         data-ad-slot="0000000000"
         data-ad-format="horizontal"
         data-full-width-responsive="false"
