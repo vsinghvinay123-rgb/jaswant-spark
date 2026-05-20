@@ -58,11 +58,11 @@ const LegalFooter = () => {
               >
                 {l.label}
               </button>
-              {i < links.length - 1 && <span className="text-gray-300">|</span>}
+              {i < links.length - 1 && <span className="text-gray-500">|</span>}
             </span>
           ))}
         </nav>
-        <p className="text-center text-[10px] text-gray-400 mt-1">
+        <p className="text-center text-[10px] text-gray-700 mt-1">
           © {new Date().getFullYear()} Bharat AI · Founded by Jaswant
         </p>
       </footer>
