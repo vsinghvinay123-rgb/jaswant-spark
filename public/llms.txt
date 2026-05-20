@@ -1,0 +1,9 @@
+# Bharat AI
+
+> 100% offline, India-first AI assistant for farmers and everyday Indians — built by Jaswant. Covers crop diagnostics (Fasal Doctor), mandi prices, agri-math, e-governance, Class 10 study help, tech, finance, and health.
+
+Bharat AI is a Jarvis-style multilingual assistant (English, Hindi, Hinglish, Marwadi) that runs entirely on a local logic engine. It includes a Fasal Doctor that scans crop images and outputs ICAR-aligned diagnostic reports with chemical and organic treatment plans, water and fertilizer calculators by land unit, GPS-based climate insights, and WhatsApp forwarding of advice.
+
+## Pages
+
+- [Home](/): Main chat interface with Fasal Doctor scanner, crop calculator, mandi prices, and multilingual voice assistant.
