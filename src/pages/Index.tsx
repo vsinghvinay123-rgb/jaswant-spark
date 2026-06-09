@@ -195,6 +195,16 @@ const Index = () => {
 
       <div className="tiranga-bar" />
 
+      {/* Site-wide crawlable nav for SEO / AdSense */}
+      <nav aria-label="Primary" className="relative z-10 bg-card/80 border-b border-border px-3 py-1.5">
+        <ul className="max-w-3xl mx-auto flex items-center justify-center gap-4 text-xs font-medium">
+          <li><Link to="/" className="text-primary hover:underline">Home</Link></li>
+          <li><Link to="/agri-wiki" className="text-foreground hover:text-primary">Agri-Wiki</Link></li>
+          <li><Link to="/about" className="text-foreground hover:text-primary">About Us</Link></li>
+          <li><Link to="/contact" className="text-foreground hover:text-primary">Contact</Link></li>
+        </ul>
+      </nav>
+
       {/* Header */}
       <header className="relative z-10 flex items-center justify-between px-3 py-2 glass-strong border-b border-border">
         <div className="flex items-center gap-2">
