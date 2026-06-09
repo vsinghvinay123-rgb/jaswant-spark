@@ -12,7 +12,8 @@ import FloatingControlPanel from "@/components/FloatingControlPanel";
 import SuggestionChips from "@/components/SuggestionChips";
 import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
 import TopAdBanner from "@/components/TopAdBanner";
-import LegalFooter from "@/components/LegalFooter";
+import SiteFooter from "@/components/SiteFooter";
+import { Link } from "react-router-dom";
 import SplashScreen from "@/components/SplashScreen";
 import ProfileSetupModal from "@/components/ProfileSetupModal";
 import type { UserProfile } from "@/components/ProfileSetupModal";
@@ -194,6 +195,16 @@ const Index = () => {
 
       <div className="tiranga-bar" />
 
+      {/* Site-wide crawlable nav for SEO / AdSense */}
+      <nav aria-label="Primary" className="relative z-10 bg-card/80 border-b border-border px-3 py-1.5">
+        <ul className="max-w-3xl mx-auto flex items-center justify-center gap-4 text-xs font-medium">
+          <li><Link to="/" className="text-primary hover:underline">Home</Link></li>
+          <li><Link to="/agri-wiki" className="text-foreground hover:text-primary">Agri-Wiki</Link></li>
+          <li><Link to="/about" className="text-foreground hover:text-primary">About Us</Link></li>
+          <li><Link to="/contact" className="text-foreground hover:text-primary">Contact</Link></li>
+        </ul>
+      </nav>
+
       {/* Header */}
       <header className="relative z-10 flex items-center justify-between px-3 py-2 glass-strong border-b border-border">
         <div className="flex items-center gap-2">
@@ -255,7 +266,7 @@ const Index = () => {
       <CropDashboard lang={lang} />
 
       {/* Messages */}
-      <div ref={scrollRef} className="relative z-10 flex-1 overflow-y-auto scrollbar-thin">
+      <main ref={scrollRef} className="relative z-10 flex-1 overflow-y-auto scrollbar-thin" aria-label="Chat conversation">
         <div className="max-w-3xl mx-auto py-4">
           {activeSession?.messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg} lang={lang} />
@@ -263,7 +274,7 @@ const Index = () => {
           {(activeSession?.messages.length ?? 0) <= 1 && <FasalDoctorHighlight lang={lang} />}
           {isLoading && <AgentSwarm />}
         </div>
-      </div>
+      </main>
 
       {/* Bottom controls */}
       <div className="relative z-10 space-y-2 pb-1">
@@ -285,6 +296,11 @@ const Index = () => {
             <ScanLine className="h-5 w-5 text-green-india" />
           </button>
         </div>
+
+        {/* AI Disclaimer (legal) */}
+        <p className="text-xs text-gray-400 text-center py-2 italic">
+          AI can make mistakes please double check it
+        </p>
       </div>
 
       {/* Footer */}
@@ -294,8 +310,8 @@ const Index = () => {
         </p>
       </div>
 
-      {/* Legal footer for AdSense compliance */}
-      <LegalFooter />
+      {/* Crawlable legal footer for AdSense compliance */}
+      <SiteFooter />
 
       <CropCalculator open={cropCalcOpen} onClose={() => setCropCalcOpen(false)} lang={lang} />
       <CropScannerModal open={scannerOpen} onClose={() => setScannerOpen(false)} onSymptomSelect={handleSend} lang={lang} />
