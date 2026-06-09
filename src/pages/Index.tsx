@@ -296,6 +296,11 @@ const Index = () => {
             <ScanLine className="h-5 w-5 text-green-india" />
           </button>
         </div>
+
+        {/* AI Disclaimer (legal) */}
+        <p className="text-xs text-gray-400 text-center py-2 italic">
+          AI can make mistakes please double check it
+        </p>
       </div>
 
       {/* Footer */}
@@ -305,8 +310,8 @@ const Index = () => {
         </p>
       </div>
 
-      {/* Legal footer for AdSense compliance */}
-      <LegalFooter />
+      {/* Crawlable legal footer for AdSense compliance */}
+      <SiteFooter />
 
       <CropCalculator open={cropCalcOpen} onClose={() => setCropCalcOpen(false)} lang={lang} />
       <CropScannerModal open={scannerOpen} onClose={() => setScannerOpen(false)} onSymptomSelect={handleSend} lang={lang} />
