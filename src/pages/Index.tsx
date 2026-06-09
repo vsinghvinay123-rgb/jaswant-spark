@@ -266,7 +266,7 @@ const Index = () => {
       <CropDashboard lang={lang} />
 
       {/* Messages */}
-      <div ref={scrollRef} className="relative z-10 flex-1 overflow-y-auto scrollbar-thin">
+      <main ref={scrollRef} className="relative z-10 flex-1 overflow-y-auto scrollbar-thin" aria-label="Chat conversation">
         <div className="max-w-3xl mx-auto py-4">
           {activeSession?.messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg} lang={lang} />
@@ -274,7 +274,7 @@ const Index = () => {
           {(activeSession?.messages.length ?? 0) <= 1 && <FasalDoctorHighlight lang={lang} />}
           {isLoading && <AgentSwarm />}
         </div>
-      </div>
+      </main>
 
       {/* Bottom controls */}
       <div className="relative z-10 space-y-2 pb-1">
