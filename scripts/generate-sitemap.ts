@@ -14,6 +14,11 @@ interface SitemapEntry {
 
 const entries: SitemapEntry[] = [
   { path: "/", changefreq: "weekly", priority: "1.0" },
+  { path: "/agri-wiki", changefreq: "monthly", priority: "0.8" },
+  { path: "/about", changefreq: "yearly", priority: "0.6" },
+  { path: "/contact", changefreq: "yearly", priority: "0.6" },
+  { path: "/privacy", changefreq: "yearly", priority: "0.5" },
+  { path: "/terms", changefreq: "yearly", priority: "0.5" },
 ];
 
 function generateSitemap(entries: SitemapEntry[]) {
