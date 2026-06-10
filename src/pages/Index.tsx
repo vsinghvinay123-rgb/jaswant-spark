@@ -311,6 +311,9 @@ const Index = () => {
         </p>
       </div>
 
+      {/* Adsterra banner ad */}
+      <AdBanner />
+
       {/* Crawlable legal footer for AdSense compliance */}
       <SiteFooter />
 
