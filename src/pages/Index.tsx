@@ -12,7 +12,7 @@ import FloatingControlPanel from "@/components/FloatingControlPanel";
 import SuggestionChips from "@/components/SuggestionChips";
 import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
 import TopAdBanner from "@/components/TopAdBanner";
-import AdBanner from "@/components/AdBanner";
+
 import SiteFooter from "@/components/SiteFooter";
 import { Link } from "react-router-dom";
 import SplashScreen from "@/components/SplashScreen";
@@ -311,8 +311,6 @@ const Index = () => {
         </p>
       </div>
 
-      {/* Adsterra banner ad */}
-      <AdBanner />
 
       {/* Crawlable legal footer for AdSense compliance */}
       <SiteFooter />
