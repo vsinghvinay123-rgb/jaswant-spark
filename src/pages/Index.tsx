@@ -299,6 +299,12 @@ const Index = () => {
           </button>
         </div>
 
+        {/* A-ADS Banner */}
+        <div className="max-w-3xl mx-auto px-4">
+          <AAdsBanner />
+        </div>
+
+
         {/* AI Disclaimer (legal) */}
         <p className="text-xs text-gray-400 text-center py-2 italic">
           AI can make mistakes please double check it
