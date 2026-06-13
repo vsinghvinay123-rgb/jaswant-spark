@@ -299,10 +299,6 @@ const Index = () => {
           </button>
         </div>
 
-        {/* A-ADS Banner */}
-        <div className="max-w-3xl mx-auto px-4">
-          <AAdsBanner />
-        </div>
 
 
         {/* AI Disclaimer (legal) */}
