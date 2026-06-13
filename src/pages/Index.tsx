@@ -12,6 +12,7 @@ import FloatingControlPanel from "@/components/FloatingControlPanel";
 import SuggestionChips from "@/components/SuggestionChips";
 import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
 import TopAdBanner from "@/components/TopAdBanner";
+import AAdsBanner from "@/components/AAdsBanner";
 
 import SiteFooter from "@/components/SiteFooter";
 import { Link } from "react-router-dom";
