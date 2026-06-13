@@ -12,6 +12,7 @@ import FloatingControlPanel from "@/components/FloatingControlPanel";
 import SuggestionChips from "@/components/SuggestionChips";
 import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
 import TopAdBanner from "@/components/TopAdBanner";
+import AAdsBanner from "@/components/AAdsBanner";
 
 import SiteFooter from "@/components/SiteFooter";
 import { Link } from "react-router-dom";
@@ -297,6 +298,12 @@ const Index = () => {
             <ScanLine className="h-5 w-5 text-green-india" />
           </button>
         </div>
+
+        {/* A-ADS Banner */}
+        <div className="max-w-3xl mx-auto px-4">
+          <AAdsBanner />
+        </div>
+
 
         {/* AI Disclaimer (legal) */}
         <p className="text-xs text-gray-400 text-center py-2 italic">
