@@ -12,7 +12,7 @@ import FloatingControlPanel from "@/components/FloatingControlPanel";
 import SuggestionChips from "@/components/SuggestionChips";
 import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
 import TopAdBanner from "@/components/TopAdBanner";
-import AAdsBanner from "@/components/AAdsBanner";
+
 
 import SiteFooter from "@/components/SiteFooter";
 import { Link } from "react-router-dom";
@@ -299,10 +299,6 @@ const Index = () => {
           </button>
         </div>
 
-        {/* A-ADS Banner */}
-        <div className="max-w-3xl mx-auto px-4">
-          <AAdsBanner />
-        </div>
 
 
         {/* AI Disclaimer (legal) */}
