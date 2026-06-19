@@ -261,9 +261,6 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Ultra-thin top AdSense banner */}
-      <TopAdBanner />
-
       {/* Crop Dashboard */}
       <CropDashboard lang={lang} />
 
