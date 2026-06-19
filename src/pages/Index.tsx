@@ -11,7 +11,7 @@ import AgentSwarm from "@/components/AgentSwarm";
 import FloatingControlPanel from "@/components/FloatingControlPanel";
 import SuggestionChips from "@/components/SuggestionChips";
 import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
-import TopAdBanner from "@/components/TopAdBanner";
+
 
 
 import SiteFooter from "@/components/SiteFooter";
