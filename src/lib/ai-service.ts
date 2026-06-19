@@ -590,6 +590,8 @@ function getCropAdvice(crop: string, age: number, lang: Lang): string {
   return `🩺 **Fasal Doctor — ${cropDisplay} (${age} ${isHindi ? "दिन" : "Days"}):**\n\nDetection: ${cropDisplay} crop at ${age} days.\nAction: ${advice}\n\n✅ *Context-aware advice from your saved crop data.*`;
 }
 
+import { supabase } from "@/integrations/supabase/client";
+
 export async function sendMessage(
   messages: Message[],
   lang: Lang,
@@ -610,11 +612,32 @@ export async function sendMessage(
     }
   } catch { /* */ }
 
-  // Simulate slight delay for natural feel
-  await new Promise((r) => setTimeout(r, 400 + Math.random() * 600));
+  // Trim long history for cost/latency
+  const trimmed = messages.slice(-12).map((m) => ({ role: m.role, content: m.content }));
 
-  return smartSearch(lastUserMsg.content, lang, cropContext);
+  try {
+    const { data, error } = await supabase.functions.invoke("gemini-chat", {
+      body: { messages: trimmed, lang, cropContext },
+    });
+
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
+    const reply = (data?.reply as string | undefined)?.trim();
+    if (!reply) throw new Error("Empty response from AI");
+    return reply;
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Unknown error";
+    console.error("Gemini chat failed", err);
+    const errorMessages: Record<string, string> = {
+      en: `⚠️ Sorry, I couldn't reach the AI right now. Please check your connection and try again.\n\n_Error: ${msg}_`,
+      hi: `⚠️ माफ़ करें, AI से कनेक्ट नहीं हो पाया। कृपया दोबारा कोशिश करें।\n\n_त्रुटि: ${msg}_`,
+      hinglish: `⚠️ Sorry, AI se connect nahi ho paya. Thodi der baad try karein.\n\n_Error: ${msg}_`,
+      mar: `⚠️ माफी, AI सूं कनेक्ट कोनी हुयो। फेर कोशिश करो।\n\n_Error: ${msg}_`,
+    };
+    return errorMessages[lang] || errorMessages.en;
+  }
 }
+
 
 export function generateId(): string {
   return crypto.randomUUID();
