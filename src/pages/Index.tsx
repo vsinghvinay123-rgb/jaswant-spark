@@ -14,7 +14,7 @@ import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
 
 
 
-import SiteFooter from "@/components/SiteFooter";
+
 import { Link } from "react-router-dom";
 import SplashScreen from "@/components/SplashScreen";
 import ProfileSetupModal from "@/components/ProfileSetupModal";
