@@ -14,7 +14,7 @@ import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
 
 
 
-import SiteFooter from "@/components/SiteFooter";
+
 import { Link } from "react-router-dom";
 import SplashScreen from "@/components/SplashScreen";
 import ProfileSetupModal from "@/components/ProfileSetupModal";
@@ -312,8 +312,6 @@ const Index = () => {
       </div>
 
 
-      {/* Crawlable legal footer for AdSense compliance */}
-      <SiteFooter />
 
       <CropCalculator open={cropCalcOpen} onClose={() => setCropCalcOpen(false)} lang={lang} />
       <CropScannerModal open={scannerOpen} onClose={() => setScannerOpen(false)} onSymptomSelect={handleSend} lang={lang} />

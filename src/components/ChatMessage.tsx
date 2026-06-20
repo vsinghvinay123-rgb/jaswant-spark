@@ -93,12 +93,12 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
         </div>
       )}
 
-      <div className={`max-w-[80%]`}>
-        <div className={`rounded-2xl px-4 py-3 ${
-          isUser
-            ? "bg-primary/20 text-foreground neon-border-orange"
-            : "glass text-foreground"
-        }`}>
+        <div className={`max-w-[80%]`}>
+          <div className={`${
+            isUser
+              ? "rounded-2xl px-4 py-3 bg-primary/20 text-foreground neon-border-orange"
+              : "text-foreground"
+          }`}>
           {isUser ? (
             <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
           ) : showInvalid ? (
