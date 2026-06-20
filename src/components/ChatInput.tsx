@@ -32,34 +32,30 @@ const ChatInput = ({ onSend, disabled, lang }: ChatInputProps) => {
     setInput(e.target.value);
     const el = e.target;
     el.style.height = "auto";
-    el.style.height = Math.min(el.scrollHeight, 120) + "px";
+    el.style.height = Math.min(el.scrollHeight, 160) + "px";
   };
 
   return (
-    <div className="px-4 py-2">
-      <div className="max-w-3xl mx-auto">
-        <div className="glass-strong rounded-2xl neon-border-orange flex items-end gap-2 p-2.5">
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={handleInput}
-            onKeyDown={handleKeyDown}
-            placeholder={t.placeholder}
-            disabled={disabled}
-            rows={1}
-            className="flex-1 bg-transparent resize-none outline-none text-sm text-foreground placeholder:text-muted-foreground scrollbar-thin font-body"
-            style={{ maxHeight: 120 }}
-          />
-          <button
-            onClick={handleSubmit}
-            disabled={disabled || !input.trim()}
-            className="flex-shrink-0 h-9 px-3 rounded-xl bg-primary text-primary-foreground flex items-center justify-center gap-1.5 transition-all saffron-glow hover:brightness-110 disabled:opacity-20 disabled:cursor-not-allowed text-xs font-heading font-semibold"
-          >
-            <Send className="h-4 w-4" />
-            <span className="hidden sm:inline">{t.sendBtn}</span>
-          </button>
-        </div>
-      </div>
+    <div className="glass-strong rounded-2xl neon-border-orange flex items-end gap-2 p-3">
+      <textarea
+        ref={textareaRef}
+        value={input}
+        onChange={handleInput}
+        onKeyDown={handleKeyDown}
+        placeholder={t.placeholder}
+        disabled={disabled}
+        rows={2}
+        className="flex-1 bg-transparent resize-none outline-none text-sm text-foreground placeholder:text-muted-foreground scrollbar-thin font-body min-h-[44px]"
+        style={{ maxHeight: 160 }}
+      />
+      <button
+        onClick={handleSubmit}
+        disabled={disabled || !input.trim()}
+        className="flex-shrink-0 h-9 px-3 rounded-xl bg-primary text-primary-foreground flex items-center justify-center gap-1.5 transition-all saffron-glow hover:brightness-110 disabled:opacity-20 disabled:cursor-not-allowed text-xs font-heading font-semibold"
+      >
+        <Send className="h-4 w-4" />
+        <span className="hidden sm:inline">{t.sendBtn}</span>
+      </button>
     </div>
   );
 };
