@@ -266,30 +266,16 @@ const Index = () => {
       </main>
 
       {/* Bottom controls */}
-      <div className="relative z-10 space-y-2 pb-1">
+      <div className="relative z-10 space-y-4 pb-4 pt-2">
         <div className="max-w-3xl mx-auto px-4">
           <SuggestionChips onSelect={handleSend} lang={lang} />
         </div>
-        <div className="flex justify-center">
-          <FloatingControlPanel onVoiceResult={handleSend} onLocationDetect={handleBotMessage} lang={lang} />
+        <div className="max-w-3xl mx-auto px-4">
+          <ChatInput onSend={handleSend} disabled={isLoading} lang={lang} />
         </div>
-        <div className="max-w-3xl mx-auto px-4 flex items-end gap-2">
-          <div className="flex-1">
-            <ChatInput onSend={handleSend} disabled={isLoading} lang={lang} />
-          </div>
-          <button
-            onClick={() => setScannerOpen(true)}
-            className="flex-shrink-0 mb-2 h-[42px] w-[42px] rounded-xl bg-secondary/15 neon-border-green flex items-center justify-center hover:bg-secondary/25 transition-colors"
-            title="Crop Scanner"
-          >
-            <ScanLine className="h-5 w-5 text-green-india" />
-          </button>
-        </div>
-
-
 
         {/* AI Disclaimer (legal) */}
-        <p className="text-xs text-gray-400 text-center py-2 italic">
+        <p className="text-xs text-muted-foreground text-center py-3 italic">
           AI can make mistakes please double check it
         </p>
       </div>
@@ -304,7 +290,7 @@ const Index = () => {
 
 
       <CropCalculator open={cropCalcOpen} onClose={() => setCropCalcOpen(false)} lang={lang} />
-      <CropScannerModal open={scannerOpen} onClose={() => setScannerOpen(false)} onSymptomSelect={handleSend} lang={lang} />
+      
       <ProfileSetupModal open={showOnboarding} onSave={handleProfileSave} currentLang={lang} />
       <ApiKeyModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
