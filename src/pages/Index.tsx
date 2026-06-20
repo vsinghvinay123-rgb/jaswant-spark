@@ -312,8 +312,6 @@ const Index = () => {
       </div>
 
 
-      {/* Crawlable legal footer for AdSense compliance */}
-      <SiteFooter />
 
       <CropCalculator open={cropCalcOpen} onClose={() => setCropCalcOpen(false)} lang={lang} />
       <CropScannerModal open={scannerOpen} onClose={() => setScannerOpen(false)} onSymptomSelect={handleSend} lang={lang} />
