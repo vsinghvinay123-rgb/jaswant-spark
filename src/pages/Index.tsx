@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { PanelLeft, Wheat, Volume2, VolumeX, Tractor, Settings, ScanLine } from "lucide-react";
+import { PanelLeft, Wheat, Volume2, VolumeX, Tractor, Settings } from "lucide-react";
 import ChatMessage from "@/components/ChatMessage";
 import ChatInput from "@/components/ChatInput";
 import ChatSidebar from "@/components/ChatSidebar";
 import CropCalculator from "@/components/CropCalculator";
 import CropDashboard from "@/components/CropDashboard";
-import CropScannerModal from "@/components/CropScannerModal";
+
 import TypingIndicator from "@/components/TypingIndicator";
 import AgentSwarm from "@/components/AgentSwarm";
-import FloatingControlPanel from "@/components/FloatingControlPanel";
+
 import SuggestionChips from "@/components/SuggestionChips";
 import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
 
@@ -66,7 +66,7 @@ const Index = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [cropCalcOpen, setCropCalcOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [scannerOpen, setScannerOpen] = useState(false);
+  
   const scrollRef = useRef<HTMLDivElement>(null);
   const activeSession = sessions.find((s) => s.id === activeSessionId);
 
@@ -139,16 +139,6 @@ const Index = () => {
     [activeSession, activeSessionId, lang, ttsEnabled, profile]
   );
 
-  const handleBotMessage = useCallback(
-    (content: string) => {
-      const msg: Message = { id: generateId(), role: "assistant", content, timestamp: new Date() };
-      setSessions((prev) =>
-        prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, msg] } : s))
-      );
-      if (ttsEnabled) speakText(content, lang);
-    },
-    [activeSessionId, lang, ttsEnabled]
-  );
 
   const handleNewChat = () => {
     const ns: ChatSession = {
