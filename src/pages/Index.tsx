@@ -277,11 +277,12 @@ const Index = () => {
 
 
       {/* Footer */}
-      <div className="relative z-10 text-center py-3">
+      <div className="relative z-10 text-center py-1">
         <p className="text-[9px] text-muted-foreground font-heading tracking-widest">
           🇮🇳 CREATED BY <span className="text-saffron font-bold">JASWANT</span> · OFFLINE & FAST
         </p>
       </div>
+
 
 
 
