@@ -266,26 +266,23 @@ const Index = () => {
       </main>
 
       {/* Bottom controls */}
-      <div className="relative z-10 space-y-6 pb-12 pt-4">
+      <div className="relative z-10 space-y-3 pb-2 pt-2">
         <div className="max-w-3xl mx-auto px-4">
           <SuggestionChips onSelect={handleSend} lang={lang} />
         </div>
         <div className="max-w-3xl mx-auto px-4">
           <ChatInput onSend={handleSend} disabled={isLoading} lang={lang} />
         </div>
-
-        {/* AI Disclaimer (legal) */}
-        <p className="text-xs text-muted-foreground text-center py-6 italic">
-          AI can make mistakes please double check it
-        </p>
       </div>
 
+
       {/* Footer */}
-      <div className="relative z-10 text-center py-3">
+      <div className="relative z-10 text-center py-1">
         <p className="text-[9px] text-muted-foreground font-heading tracking-widest">
           🇮🇳 CREATED BY <span className="text-saffron font-bold">JASWANT</span> · OFFLINE & FAST
         </p>
       </div>
+
 
 
 
