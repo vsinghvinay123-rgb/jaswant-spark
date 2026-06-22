@@ -266,7 +266,7 @@ const Index = () => {
       </main>
 
       {/* Bottom controls */}
-      <div className="relative z-10 space-y-4 pb-4 pt-2">
+      <div className="relative z-10 space-y-4 pb-8 pt-2">
         <div className="max-w-3xl mx-auto px-4">
           <SuggestionChips onSelect={handleSend} lang={lang} />
         </div>
@@ -281,7 +281,7 @@ const Index = () => {
       </div>
 
       {/* Footer */}
-      <div className="relative z-10 text-center py-1">
+      <div className="relative z-10 text-center py-3">
         <p className="text-[9px] text-muted-foreground font-heading tracking-widest">
           🇮🇳 CREATED BY <span className="text-saffron font-bold">JASWANT</span> · OFFLINE & FAST
         </p>
