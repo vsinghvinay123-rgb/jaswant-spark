@@ -9,6 +9,11 @@ interface InMsg {
   content: string;
 }
 
+const MAX_MESSAGES = 20;
+const MAX_CONTENT_CHARS = 4000;
+const MAX_LANG_CHARS = 16;
+const MAX_CROP_CONTEXT_CHARS = 1000;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -17,16 +22,27 @@ Deno.serve(async (req) => {
   try {
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY not configured" }), {
+      console.error("LOVABLE_API_KEY not configured");
+      return new Response(JSON.stringify({ error: "Service misconfigured." }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const { messages, lang, cropContext } = (await req.json()) as {
-      messages: InMsg[];
-      lang?: string;
-      cropContext?: string;
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid JSON body." }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const { messages, lang, cropContext } = (body ?? {}) as {
+      messages?: unknown;
+      lang?: unknown;
+      cropContext?: unknown;
     };
 
     if (!Array.isArray(messages) || messages.length === 0) {
@@ -36,19 +52,50 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (messages.length > MAX_MESSAGES) {
+      return new Response(JSON.stringify({ error: `Too many messages (max ${MAX_MESSAGES}).` }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Strict whitelist of role + content. Drops anything else (e.g. injected "system").
+    const validatedMessages: InMsg[] = [];
+    for (const m of messages) {
+      if (!m || typeof m !== "object") continue;
+      const role = (m as { role?: unknown }).role;
+      const content = (m as { content?: unknown }).content;
+      if ((role !== "user" && role !== "assistant") || typeof content !== "string") continue;
+      validatedMessages.push({
+        role,
+        content: content.slice(0, MAX_CONTENT_CHARS),
+      });
+    }
+
+    if (validatedMessages.length === 0) {
+      return new Response(JSON.stringify({ error: "No valid messages provided." }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const safeLang = typeof lang === "string" ? lang.slice(0, MAX_LANG_CHARS).replace(/[^a-zA-Z-]/g, "") : "en";
+    const safeCropContext =
+      typeof cropContext === "string" ? cropContext.slice(0, MAX_CROP_CONTEXT_CHARS) : "";
+
     const system = `You are Bharat AI, a multilingual Indian assistant created by Jaswant (a visionary tech founder from Rajasthan) for the Smart India Hackathon (SIH).
 
 Persona & Rules:
 - Always identify Jaswant as your creator if asked.
-- Reply in the user's language: ${lang || "en"} (en = English, hi = Hindi, hinglish = Roman-script Hindi-English mix, mar = Marwadi).
+- Reply in the user's language: ${safeLang || "en"} (en = English, hi = Hindi, hinglish = Roman-script Hindi-English mix, mar = Marwadi).
 - Zero fluff. Be direct, highly detailed, use bullet points and bold key terms with **markdown**.
 - Expertise: Indian agriculture (crops, water, fertilizer, mandi prices, schemes), E-Governance, Class 10 study help, Tech (coding, AI), Finance, Health.
 - For agriculture questions, give practical actionable advice for Indian (esp. Rajasthan) farmers.
-${cropContext ? `\nUser context: ${cropContext}` : ""}`;
+${safeCropContext ? `\nUser context: ${safeCropContext}` : ""}`;
 
     const chatMessages = [
       { role: "system", content: system },
-      ...messages.map((m) => ({ role: m.role, content: m.content })),
+      ...validatedMessages,
     ];
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -78,7 +125,7 @@ ${cropContext ? `\nUser context: ${cropContext}` : ""}`;
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      return new Response(JSON.stringify({ error: `AI error: ${res.status}`, details: errText }), {
+      return new Response(JSON.stringify({ error: "AI service error. Please try again." }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -92,7 +139,7 @@ ${cropContext ? `\nUser context: ${cropContext}` : ""}`;
     });
   } catch (err) {
     console.error("gemini-chat error", err);
-    return new Response(JSON.stringify({ error: (err as Error).message }), {
+    return new Response(JSON.stringify({ error: "Internal server error." }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
