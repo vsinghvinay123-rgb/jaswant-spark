@@ -266,7 +266,7 @@ const Index = () => {
       </main>
 
       {/* Bottom controls */}
-      <div className="relative z-10 space-y-4 pb-8 pt-2">
+      <div className="relative z-10 space-y-6 pb-12 pt-4">
         <div className="max-w-3xl mx-auto px-4">
           <SuggestionChips onSelect={handleSend} lang={lang} />
         </div>
@@ -275,7 +275,7 @@ const Index = () => {
         </div>
 
         {/* AI Disclaimer (legal) */}
-        <p className="text-xs text-muted-foreground text-center py-3 italic">
+        <p className="text-xs text-muted-foreground text-center py-6 italic">
           AI can make mistakes please double check it
         </p>
       </div>
