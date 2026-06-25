@@ -626,13 +626,12 @@ export async function sendMessage(
     if (!reply) throw new Error("Empty response from AI");
     return reply;
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "Unknown error";
     console.error("Gemini chat failed", err);
     const errorMessages: Record<string, string> = {
-      en: `⚠️ Sorry, I couldn't reach the AI right now. Please check your connection and try again.\n\n_Error: ${msg}_`,
-      hi: `⚠️ माफ़ करें, AI से कनेक्ट नहीं हो पाया। कृपया दोबारा कोशिश करें।\n\n_त्रुटि: ${msg}_`,
-      hinglish: `⚠️ Sorry, AI se connect nahi ho paya. Thodi der baad try karein.\n\n_Error: ${msg}_`,
-      mar: `⚠️ माफी, AI सूं कनेक्ट कोनी हुयो। फेर कोशिश करो।\n\n_Error: ${msg}_`,
+      en: `⚠️ Sorry, I couldn't reach the AI right now. Please check your connection and try again.`,
+      hi: `⚠️ माफ़ करें, AI से कनेक्ट नहीं हो पाया। कृपया दोबारा कोशिश करें।`,
+      hinglish: `⚠️ Sorry, AI se connect nahi ho paya. Thodi der baad try karein.`,
+      mar: `⚠️ माफी, AI सूं कनेक्ट कोनी हुयो। फेर कोशिश करो।`,
     };
     return errorMessages[lang] || errorMessages.en;
   }
