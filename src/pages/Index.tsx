@@ -126,7 +126,7 @@ const Index = () => {
         // Should not reach here since sendMessage now returns debug info
         const errMsg: Message = {
           id: generateId(), role: "assistant",
-          content: "DEBUG INFO: Unexpected error in sendMessage",
+          content: "⚠️ Something went wrong. Please try again.",
           timestamp: new Date(),
         };
         setSessions((prev) =>
