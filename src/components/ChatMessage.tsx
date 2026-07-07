@@ -96,7 +96,7 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
         <div className={`max-w-[80%]`}>
           <div className={`${
             isUser
-              ? "rounded-2xl px-4 py-3 bg-primary/20 text-foreground neon-border-orange"
+              ? "rounded-2xl px-4 py-3 bg-muted text-foreground border border-border"
               : "text-foreground"
           }`}>
           {isUser ? (
@@ -108,7 +108,7 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
           ) : showPrescription ? (
             <TreatmentMatrix content={message.content} />
           ) : (
-            <div className="prose prose-sm prose-invert max-w-none text-foreground">
+            <div className="prose prose-sm max-w-none text-foreground">
               <ReactMarkdown
                 components={{
                   code({ className, children, ...props }) {

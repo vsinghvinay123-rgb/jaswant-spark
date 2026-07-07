@@ -23,7 +23,7 @@ const SuggestionChips = ({ onSelect, lang }: SuggestionChipsProps) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.04 }}
           onClick={() => onSelect(s)}
-          className="flex-shrink-0 px-3 py-1 rounded-full text-[10px] font-heading font-semibold tracking-wide bg-muted text-muted-foreground hover:text-primary hover:neon-border-orange transition-all border border-border"
+          className="flex-shrink-0 px-3 py-1 rounded-full text-[10px] font-heading font-semibold tracking-wide bg-card text-foreground hover:text-primary hover:border-primary/40 transition-all border border-border shadow-sm"
         >
           {s}
         </motion.button>

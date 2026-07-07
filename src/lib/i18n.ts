@@ -38,7 +38,7 @@ export const UI_TEXT: Record<Lang, {
     tagline: "Your Indian Knowledge Assistant",
     chatHistory: "Chat History",
     newChat: "New Chat",
-    placeholder: "Ask about crops, pests, or weather...",
+    placeholder: "Ask Fasal Doctor about crops, pests, or weather...",
     poweredBy: "Created by Jaswant",
     cropCalculator: "Crop Calculator",
     selectCrop: "Select a crop",
