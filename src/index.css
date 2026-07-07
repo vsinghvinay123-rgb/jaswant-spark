@@ -79,15 +79,15 @@
   }
 
   .glass {
-    background: hsl(220 18% 10% / 0.7);
+    background: hsl(0 0% 100% / 0.85);
     backdrop-filter: blur(24px);
-    border: 1px solid hsl(var(--border) / 0.6);
+    border: 1px solid hsl(var(--border) / 0.8);
   }
 
   .glass-strong {
-    background: hsl(220 18% 9% / 0.92);
+    background: hsl(0 0% 100% / 0.95);
     backdrop-filter: blur(32px);
-    border: 1px solid hsl(var(--border) / 0.7);
+    border: 1px solid hsl(var(--border));
   }
 
   .saffron-glow {
