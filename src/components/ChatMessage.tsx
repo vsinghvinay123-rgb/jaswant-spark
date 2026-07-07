@@ -108,7 +108,7 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
           ) : showPrescription ? (
             <TreatmentMatrix content={message.content} />
           ) : (
-            <div className="prose prose-sm prose-invert max-w-none text-foreground">
+            <div className="prose prose-sm max-w-none text-foreground">
               <ReactMarkdown
                 components={{
                   code({ className, children, ...props }) {
