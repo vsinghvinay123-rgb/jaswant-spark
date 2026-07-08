@@ -11,6 +11,7 @@ import AgentSwarm from "@/components/AgentSwarm";
 
 import SuggestionChips from "@/components/SuggestionChips";
 import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
+import FloatingControlPanel from "@/components/FloatingControlPanel";
 
 
 
@@ -266,9 +267,19 @@ const Index = () => {
       </main>
 
       {/* Bottom controls */}
-      <div className="relative z-10 space-y-3 pb-2 pt-2">
+      <div className="relative z-10 space-y-2 pb-2 pt-2">
         <div className="max-w-3xl mx-auto px-4">
           <SuggestionChips onSelect={handleSend} lang={lang} />
+        </div>
+        <div className="max-w-3xl mx-auto px-4 flex justify-center">
+          <FloatingControlPanel
+            lang={lang}
+            onVoiceResult={(text) => handleSend(text)}
+            onLocationDetect={(msg) => {
+              const aiMsg: Message = { id: generateId(), role: "assistant", content: msg, timestamp: new Date() };
+              setSessions((prev) => prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, aiMsg] } : s)));
+            }}
+          />
         </div>
         <div className="max-w-3xl mx-auto px-4">
           <ChatInput onSend={handleSend} disabled={isLoading} lang={lang} />
