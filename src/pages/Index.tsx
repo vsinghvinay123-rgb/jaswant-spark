@@ -11,6 +11,7 @@ import AgentSwarm from "@/components/AgentSwarm";
 
 import SuggestionChips from "@/components/SuggestionChips";
 import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
+import FloatingControlPanel from "@/components/FloatingControlPanel";
 
 
 
