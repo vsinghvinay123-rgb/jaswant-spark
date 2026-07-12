@@ -63,11 +63,18 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { messages, lang, cropContext } = (body ?? {}) as {
+    const { messages, lang, cropContext, imageDataUrl } = (body ?? {}) as {
       messages?: unknown;
       lang?: unknown;
       cropContext?: unknown;
+      imageDataUrl?: unknown;
     };
+
+    // Validate optional image (base64 data URL, max ~8MB after encoding)
+    let safeImageDataUrl: string | null = null;
+    if (typeof imageDataUrl === "string" && imageDataUrl.startsWith("data:image/") && imageDataUrl.length < 8_000_000) {
+      safeImageDataUrl = imageDataUrl;
+    }
 
     if (!Array.isArray(messages) || messages.length === 0) {
       return new Response(JSON.stringify({ error: "messages array required" }), {
