@@ -59,11 +59,13 @@ export const UI_TEXT: Record<Lang, {
     sendBtn: "Send",
     welcome: `## Namaste! 🙏🇮🇳
 
-I am **Bharat AI**, created by **Jaswant**.
+I am **Bharat AI — Fasal Doctor**, created by **Jaswant**.
+
+I'm an all-around knowledgeable assistant with **special expertise as your Fasal Doctor** — diagnosing crop diseases, recommending treatments, and guiding you through every stage of farming.
 
 **Capabilities:**
+- 🩺 Fasal Doctor — diagnose crop diseases & pests via scan or description
 - 🌾 Agri-Math Engine — type "5 acre bajra" for instant calculation
-- 📷 Fasal Doctor — scan crop leaves
 - 📍 Auto-Location — optimized crop suggestions
 - 🎤 Voice Input — speak your question
 - 📡 100+ GK facts — ISRO, History, Constitution
