@@ -595,7 +595,8 @@ import { supabase } from "@/integrations/supabase/client";
 export async function sendMessage(
   messages: Message[],
   lang: Lang,
-  _profileLandSize?: string
+  _profileLandSize?: string,
+  imageDataUrl?: string,
 ): Promise<string> {
   const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
   if (!lastUserMsg) return UI_TEXT[lang].fallback;
@@ -617,7 +618,7 @@ export async function sendMessage(
 
   try {
     const { data, error } = await supabase.functions.invoke("gemini-chat", {
-      body: { messages: trimmed, lang, cropContext },
+      body: { messages: trimmed, lang, cropContext, imageDataUrl },
     });
 
     if (error) throw error;
