@@ -205,9 +205,11 @@ const Index = () => {
             <PanelLeft className="h-5 w-5" />
           </button>
           <span className="text-lg">🇮🇳</span>
-          <h1 className="font-heading font-bold text-base tracking-wide">
+          <h1 className="font-heading font-bold text-sm sm:text-base tracking-wide leading-tight">
             <span className="text-saffron">BHARAT</span>{" "}
             <span className="text-green-india">AI</span>
+            <span className="text-muted-foreground font-normal"> — </span>
+            <span className="text-primary">Fasal Doctor</span>
           </h1>
 
           {/* Profile Badge */}
