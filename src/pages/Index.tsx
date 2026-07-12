@@ -276,10 +276,56 @@ const Index = () => {
         <div className="max-w-3xl mx-auto px-4 flex justify-center">
           <FloatingControlPanel
             lang={lang}
+            onSend={(text) => handleSend(text)}
             onVoiceResult={(text) => handleSend(text)}
             onLocationDetect={(msg) => {
               const aiMsg: Message = { id: generateId(), role: "assistant", content: msg, timestamp: new Date() };
               setSessions((prev) => prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, aiMsg] } : s)));
+            }}
+            onImageAnalyze={async (dataUrl) => {
+              if (!activeSession) return;
+              const langLabel = lang === "hi" ? "Hindi" : lang === "hinglish" ? "Hinglish" : lang === "marwadi" ? "Marwadi" : "English";
+              const visionPrompt = `🩺 **Fasal Doctor Vision Diagnosis Request**
+
+I am uploading a photo of my crop / leaf. **Act as an ICAR-certified Fasal Doctor** and reply in ${langLabel} with:
+
+1. **Crop identification** (which crop is this?)
+2. **Disease / pest / deficiency diagnosis** (name + scientific name if known)
+3. **Symptoms visible** in the photo
+4. **Cause & environmental triggers**
+5. **Severity level** (Mild / Moderate / Severe)
+6. **Organic / Desi treatment protocol** (dose, frequency, ingredients)
+7. **Chemical treatment protocol** (exact molecule, dose per litre, spray timing)
+8. **Prevention tips** for the next crop cycle
+9. If the image is NOT a plant/leaf, say so clearly and ask for a proper crop photo.`;
+
+              const userMsg: Message = {
+                id: generateId(),
+                role: "user",
+                content: `📷 [Crop photo uploaded for Fasal Doctor analysis]`,
+                timestamp: new Date(),
+              };
+              // add user message
+              setSessions((prev) =>
+                prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, userMsg] } : s))
+              );
+              setIsLoading(true);
+              try {
+                const history = [...activeSession.messages, userMsg].filter((m) => m.id !== "welcome");
+                // Replace last user content with the detailed vision prompt (so the model receives full instructions alongside the image)
+                const forAi = history.slice(0, -1).concat([{ ...userMsg, content: visionPrompt }]);
+                const response = await sendMessage(forAi, lang, profile?.landSize, dataUrl);
+                const aiMsg: Message = { id: generateId(), role: "assistant", content: response, timestamp: new Date() };
+                setSessions((prev) =>
+                  prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, aiMsg] } : s))
+                );
+                if (ttsEnabled) speakText(response, lang);
+              } catch {
+                const errMsg: Message = { id: generateId(), role: "assistant", content: "⚠️ Image analysis failed. Please try again.", timestamp: new Date() };
+                setSessions((prev) => prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, errMsg] } : s)));
+              } finally {
+                setIsLoading(false);
+              }
             }}
           />
         </div>

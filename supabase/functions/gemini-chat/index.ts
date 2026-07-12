@@ -63,11 +63,18 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { messages, lang, cropContext } = (body ?? {}) as {
+    const { messages, lang, cropContext, imageDataUrl } = (body ?? {}) as {
       messages?: unknown;
       lang?: unknown;
       cropContext?: unknown;
+      imageDataUrl?: unknown;
     };
+
+    // Validate optional image (base64 data URL, max ~8MB after encoding)
+    let safeImageDataUrl: string | null = null;
+    if (typeof imageDataUrl === "string" && imageDataUrl.startsWith("data:image/") && imageDataUrl.length < 8_000_000) {
+      safeImageDataUrl = imageDataUrl;
+    }
 
     if (!Array.isArray(messages) || messages.length === 0) {
       return new Response(JSON.stringify({ error: "messages array required" }), {
@@ -117,10 +124,26 @@ Persona & Rules:
 - For agriculture questions, give practical actionable advice for Indian (esp. Rajasthan) farmers.
 ${safeCropContext ? `\nUser context: ${safeCropContext}` : ""}`;
 
-    const chatMessages = [
+    // Build chat messages. If an image is attached, upgrade the LAST user message
+    // to multimodal content array so Gemini Vision can see the crop photo.
+    const chatMessages: Array<{ role: string; content: unknown }> = [
       { role: "system", content: system },
       ...validatedMessages,
     ];
+
+    if (safeImageDataUrl) {
+      // Find last user message and convert its content to a multimodal array
+      for (let i = chatMessages.length - 1; i >= 0; i--) {
+        if (chatMessages[i].role === "user") {
+          const textPart = chatMessages[i].content as string;
+          chatMessages[i].content = [
+            { type: "text", text: textPart },
+            { type: "image_url", image_url: { url: safeImageDataUrl } },
+          ];
+          break;
+        }
+      }
+    }
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
