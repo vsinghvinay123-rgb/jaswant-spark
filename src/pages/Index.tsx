@@ -171,7 +171,7 @@ const Index = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-background relative overflow-hidden">
+    <div className="h-[100dvh] flex flex-col bg-background relative overflow-hidden">
       {/* Grid background */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{ backgroundImage: "linear-gradient(hsl(var(--neon-green)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--neon-green)) 1px, transparent 1px)", backgroundSize: "40px 40px" }}
@@ -269,7 +269,7 @@ const Index = () => {
       </main>
 
       {/* Bottom controls */}
-      <div className="relative z-10 space-y-2 pb-2 pt-2">
+      <div className="relative z-10 space-y-2 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2">
         <div className="max-w-3xl mx-auto px-4">
           <SuggestionChips onSelect={handleSend} lang={lang} />
         </div>
