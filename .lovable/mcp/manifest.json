@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "sdk_version": "0.22.2",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://ctesglwdrufastiswuxr.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "bharat-ai-fasal-doctor",
+      "version": "0.1.0",
+      "title": "Bharat AI · Fasal Doctor"
+    },
+    "tools": [
+      {
+        "name": "ask_fasal_doctor",
+        "title": "Ask Fasal Doctor",
+        "description": "Ask Bharat AI's Fasal Doctor for structured crop diagnosis, pest / disease prescriptions (ICAR-standard), mandi advice, irrigation advice, or general Indian agriculture guidance. Returns a professional clinical report when the question is about a plant / crop.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "question": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 4000,
+              "description": "The farmer's question in English, Hindi, Hinglish or Marwadi. E.g. 'Wheat leaves turning yellow with orange stripes' or 'Aaj bajra ka mandi bhav Rajasthan'."
+            },
+            "lang": {
+              "type": "string",
+              "enum": [
+                "en",
+                "hi",
+                "hinglish",
+                "mar"
+              ],
+              "default": "en",
+              "description": "Preferred reply language: en, hi (Hindi), hinglish, or mar (Marwadi)."
+            }
+          },
+          "required": [
+            "question"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
