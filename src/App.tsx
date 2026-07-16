@@ -13,6 +13,7 @@ import Privacy from "./pages/Privacy.tsx";
 import Terms from "./pages/Terms.tsx";
 import Login from "./pages/Login.tsx";
 import OAuthConsent from "./pages/OAuthConsent.tsx";
+import SettingsMcp from "./pages/SettingsMcp.tsx";
 
 const queryClient = new QueryClient();
 
