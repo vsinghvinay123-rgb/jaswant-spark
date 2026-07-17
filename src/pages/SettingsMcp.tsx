@@ -223,7 +223,7 @@ export default function SettingsMcp() {
                   </span>
                 </div>
                 <p className="mt-2 text-[11px] text-muted-foreground whitespace-pre-wrap break-words">
-                  {testResult.ok ? testResult.preview : testResult.message}
+                  {testResult.ok === true ? testResult.preview : testResult.message}
                 </p>
               </div>
             )}
