@@ -184,6 +184,50 @@ export default function SettingsMcp() {
             <span>•</span>
             <span>Tool: <code className="font-mono">ask_fasal_doctor</code></span>
           </div>
+
+          {/* Live test */}
+          <div className="mt-4 pt-4 border-t border-border">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-heading font-semibold">Test connection</p>
+                <p className="text-[11px] text-muted-foreground">
+                  Calls <code className="font-mono">ask_fasal_doctor</code> with a sample payload.
+                </p>
+              </div>
+              <button
+                onClick={testConnection}
+                disabled={testing}
+                className="flex items-center gap-1.5 text-xs font-heading font-semibold px-3 py-2 rounded-lg bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50"
+              >
+                {testing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
+                {testing ? "Testing…" : "Run test"}
+              </button>
+            </div>
+            {testResult && (
+              <div
+                className={`mt-3 rounded-lg border p-3 text-xs ${
+                  testResult.ok
+                    ? "border-primary/30 bg-primary/5 text-foreground"
+                    : "border-destructive/30 bg-destructive/5 text-foreground"
+                }`}
+              >
+                <div className="flex items-center gap-2 font-medium">
+                  {testResult.ok ? (
+                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                  ) : (
+                    <XCircle className="h-4 w-4 text-destructive" />
+                  )}
+                  <span>{testResult.ok ? "Success" : "Failed"}</span>
+                  <span className="ml-auto font-mono text-[11px] text-muted-foreground">
+                    {testResult.ms} ms
+                  </span>
+                </div>
+                <p className="mt-2 text-[11px] text-muted-foreground whitespace-pre-wrap break-words">
+                  {testResult.ok ? testResult.preview : testResult.message}
+                </p>
+              </div>
+            )}
+          </div>
         </section>
 
         {/* Connected clients */}
