@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Copy, ExternalLink, Loader2, ShieldCheck, Trash2, RefreshCw, LogOut } from "lucide-react";
+import { Copy, ExternalLink, Loader2, ShieldCheck, Trash2, RefreshCw, LogOut, Zap, CheckCircle2, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
