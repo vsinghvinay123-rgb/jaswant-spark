@@ -25,6 +25,60 @@ export default function SettingsMcp() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [revoking, setRevoking] = useState<string | null>(null);
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState<
+    | { ok: true; ms: number; preview: string }
+    | { ok: false; ms: number; message: string }
+    | null
+  >(null);
+
+  async function testConnection() {
+    setTesting(true);
+    setTestResult(null);
+    const started = performance.now();
+    try {
+      const { data: sess } = await supabase.auth.getSession();
+      const token = sess.session?.access_token;
+      if (!token) throw new Error("Not signed in.");
+      const res = await fetch(MCP_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/event-stream",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          method: "tools/call",
+          params: {
+            name: "ask_fasal_doctor",
+            arguments: { question: "Ping: reply with a one-line hello.", lang: "en" },
+          },
+        }),
+      });
+      const ms = Math.round(performance.now() - started);
+      const raw = await res.text();
+      // Server may return SSE — grab the last JSON payload.
+      const jsonLine =
+        raw.split("\n").reverse().find((l) => l.trim().startsWith("{")) ?? raw;
+      let payload: { result?: { content?: Array<{ text?: string }>; isError?: boolean }; error?: { message: string } } = {};
+      try { payload = JSON.parse(jsonLine); } catch { /* ignore */ }
+      if (!res.ok || payload.error) {
+        throw new Error(payload.error?.message ?? `HTTP ${res.status}: ${raw.slice(0, 160)}`);
+      }
+      if (payload.result?.isError) {
+        throw new Error(payload.result?.content?.[0]?.text ?? "Tool returned an error.");
+      }
+      const preview = payload.result?.content?.[0]?.text?.slice(0, 220) ?? "OK";
+      setTestResult({ ok: true, ms, preview });
+    } catch (e) {
+      const ms = Math.round(performance.now() - started);
+      setTestResult({ ok: false, ms, message: (e as Error).message });
+    } finally {
+      setTesting(false);
+    }
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
