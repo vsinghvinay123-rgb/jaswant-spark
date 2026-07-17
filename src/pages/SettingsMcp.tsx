@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Copy, ExternalLink, Loader2, ShieldCheck, Trash2, RefreshCw, LogOut } from "lucide-react";
+import { Copy, ExternalLink, Loader2, ShieldCheck, Trash2, RefreshCw, LogOut, Zap, CheckCircle2, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -25,6 +25,60 @@ export default function SettingsMcp() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [revoking, setRevoking] = useState<string | null>(null);
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState<
+    | { ok: true; ms: number; preview: string }
+    | { ok: false; ms: number; message: string }
+    | null
+  >(null);
+
+  async function testConnection() {
+    setTesting(true);
+    setTestResult(null);
+    const started = performance.now();
+    try {
+      const { data: sess } = await supabase.auth.getSession();
+      const token = sess.session?.access_token;
+      if (!token) throw new Error("Not signed in.");
+      const res = await fetch(MCP_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/event-stream",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          method: "tools/call",
+          params: {
+            name: "ask_fasal_doctor",
+            arguments: { question: "Ping: reply with a one-line hello.", lang: "en" },
+          },
+        }),
+      });
+      const ms = Math.round(performance.now() - started);
+      const raw = await res.text();
+      // Server may return SSE — grab the last JSON payload.
+      const jsonLine =
+        raw.split("\n").reverse().find((l) => l.trim().startsWith("{")) ?? raw;
+      let payload: { result?: { content?: Array<{ text?: string }>; isError?: boolean }; error?: { message: string } } = {};
+      try { payload = JSON.parse(jsonLine); } catch { /* ignore */ }
+      if (!res.ok || payload.error) {
+        throw new Error(payload.error?.message ?? `HTTP ${res.status}: ${raw.slice(0, 160)}`);
+      }
+      if (payload.result?.isError) {
+        throw new Error(payload.result?.content?.[0]?.text ?? "Tool returned an error.");
+      }
+      const preview = payload.result?.content?.[0]?.text?.slice(0, 220) ?? "OK";
+      setTestResult({ ok: true, ms, preview });
+    } catch (e) {
+      const ms = Math.round(performance.now() - started);
+      setTestResult({ ok: false, ms, message: (e as Error).message });
+    } finally {
+      setTesting(false);
+    }
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -129,6 +183,50 @@ export default function SettingsMcp() {
             <span>Auth: OAuth 2.1</span>
             <span>•</span>
             <span>Tool: <code className="font-mono">ask_fasal_doctor</code></span>
+          </div>
+
+          {/* Live test */}
+          <div className="mt-4 pt-4 border-t border-border">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-heading font-semibold">Test connection</p>
+                <p className="text-[11px] text-muted-foreground">
+                  Calls <code className="font-mono">ask_fasal_doctor</code> with a sample payload.
+                </p>
+              </div>
+              <button
+                onClick={testConnection}
+                disabled={testing}
+                className="flex items-center gap-1.5 text-xs font-heading font-semibold px-3 py-2 rounded-lg bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50"
+              >
+                {testing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
+                {testing ? "Testing…" : "Run test"}
+              </button>
+            </div>
+            {testResult && (
+              <div
+                className={`mt-3 rounded-lg border p-3 text-xs ${
+                  testResult.ok
+                    ? "border-primary/30 bg-primary/5 text-foreground"
+                    : "border-destructive/30 bg-destructive/5 text-foreground"
+                }`}
+              >
+                <div className="flex items-center gap-2 font-medium">
+                  {testResult.ok ? (
+                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                  ) : (
+                    <XCircle className="h-4 w-4 text-destructive" />
+                  )}
+                  <span>{testResult.ok ? "Success" : "Failed"}</span>
+                  <span className="ml-auto font-mono text-[11px] text-muted-foreground">
+                    {testResult.ms} ms
+                  </span>
+                </div>
+                <p className="mt-2 text-[11px] text-muted-foreground whitespace-pre-wrap break-words">
+                  {testResult.ok === true ? testResult.preview : testResult.message}
+                </p>
+              </div>
+            )}
           </div>
         </section>
 

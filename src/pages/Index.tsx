@@ -338,7 +338,7 @@ I am uploading a photo of my crop / leaf. **Act as an ICAR-certified Fasal Docto
       {/* Footer */}
       <div className="relative z-10 text-center py-1">
         <p className="text-[9px] text-muted-foreground font-heading tracking-widest">
-          🇮🇳 CREATED BY <span className="text-saffron font-bold">JASWANT</span> · OFFLINE & FAST
+          🇮🇳 CREATED BY <span className="text-saffron font-bold">JASWANT</span> · FAST
         </p>
       </div>
 
