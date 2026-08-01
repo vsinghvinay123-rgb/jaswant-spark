@@ -65,6 +65,8 @@ const Index = () => {
 
   const [activeSessionId, setActiveSessionId] = useState<string>(sessions[0]?.id);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [cropCalcOpen, setCropCalcOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
