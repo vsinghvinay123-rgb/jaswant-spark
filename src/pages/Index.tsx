@@ -293,7 +293,7 @@ const Index = () => {
             <ChatMessage key={msg.id} message={msg} lang={lang} />
           ))}
           {(activeSession?.messages.length ?? 0) <= 1 && <FasalDoctorHighlight lang={lang} />}
-          {isLoading && <TypingIndicator />}
+          {isLoading && <TypingIndicator label={isGeneratingImage ? "Generating image" : "Thinking"} />}
         </div>
       </main>
 
