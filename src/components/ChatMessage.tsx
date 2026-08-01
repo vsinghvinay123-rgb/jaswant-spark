@@ -140,7 +140,9 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
               </ReactMarkdown>
             </div>
           )}
+          {message.imageUrl && <ChatImage url={message.imageUrl} alt={message.content.slice(0, 120) || "AI generated image"} />}
         </div>
+
 
         {/* Action row: TTS + WhatsApp */}
         {!isUser && message.id !== "welcome" && (
