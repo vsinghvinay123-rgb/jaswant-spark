@@ -6,7 +6,9 @@ import { Copy, Check, User, Volume2, VolumeOff } from "lucide-react";
 import logoAsset from "@/assets/bharat-ai-logo.png.asset.json";
 import { motion } from "framer-motion";
 import WhatsAppShare from "./WhatsAppShare";
+import ChatImage from "./ChatImage";
 import TreatmentMatrix from "./TreatmentMatrix";
+
 import {
   ClinicalReport,
   InvalidCropCard,
