@@ -23,6 +23,8 @@ import ProfileSetupModal from "@/components/ProfileSetupModal";
 import type { UserProfile } from "@/components/ProfileSetupModal";
 import ApiKeyModal from "@/components/ApiKeyModal";
 import { sendMessage, generateId, type Message, type ChatSession } from "@/lib/ai-service";
+import { isImageRequest, extractImagePrompt, generateImage } from "@/lib/image-service";
+
 import { speakText } from "@/lib/speech";
 import { UI_TEXT, LANG_OPTIONS, type Lang } from "@/lib/i18n";
 
