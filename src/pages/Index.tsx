@@ -18,6 +18,7 @@ import FloatingControlPanel from "@/components/FloatingControlPanel";
 
 import { Link } from "react-router-dom";
 import SplashScreen from "@/components/SplashScreen";
+import logoAsset from "@/assets/bharat-ai-logo.png.asset.json";
 import ProfileSetupModal from "@/components/ProfileSetupModal";
 import type { UserProfile } from "@/components/ProfileSetupModal";
 import ApiKeyModal from "@/components/ApiKeyModal";
@@ -204,7 +205,7 @@ const Index = () => {
           <button onClick={() => setSidebarOpen(true)} className="text-muted-foreground hover:text-foreground transition-colors">
             <PanelLeft className="h-5 w-5" />
           </button>
-          <span className="text-lg">🇮🇳</span>
+          <img src={logoAsset.url} alt="Bharat AI Fasal Doctor logo" className="h-7 w-7 object-contain" />
           <h1 className="font-heading font-bold text-sm sm:text-base tracking-wide leading-tight">
             <span className="text-saffron">BHARAT</span>{" "}
             <span className="text-green-india">AI</span>

@@ -1,4 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
+import logoAsset from "@/assets/bharat-ai-logo.png.asset.json";
 
 const navItems = [
   { to: "/", label: "Home" },
@@ -15,7 +16,7 @@ const SiteHeader = () => {
         className="max-w-5xl mx-auto flex items-center justify-between px-4 py-3"
       >
         <Link to="/" className="flex items-center gap-2">
-          <span className="text-xl">🇮🇳</span>
+          <img src={logoAsset.url} alt="Bharat AI Fasal Doctor logo" className="h-8 w-8 object-contain" />
           <span className="font-heading font-bold text-base tracking-wide">
             <span className="text-saffron">BHARAT</span>{" "}
             <span className="text-green-india">AI</span>
