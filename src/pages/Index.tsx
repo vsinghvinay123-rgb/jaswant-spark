@@ -7,7 +7,7 @@ import CropCalculator from "@/components/CropCalculator";
 import CropDashboard from "@/components/CropDashboard";
 
 import TypingIndicator from "@/components/TypingIndicator";
-import AgentSwarm from "@/components/AgentSwarm";
+
 
 import SuggestionChips from "@/components/SuggestionChips";
 import FasalDoctorHighlight from "@/components/FasalDoctorHighlight";
@@ -264,7 +264,7 @@ const Index = () => {
             <ChatMessage key={msg.id} message={msg} lang={lang} />
           ))}
           {(activeSession?.messages.length ?? 0) <= 1 && <FasalDoctorHighlight lang={lang} />}
-          {isLoading && <AgentSwarm />}
+          {isLoading && <TypingIndicator />}
         </div>
       </main>
 
