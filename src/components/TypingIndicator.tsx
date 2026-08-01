@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import logoAsset from "@/assets/bharat-ai-logo.png.asset.json";
 
-const TypingIndicator = () => (
+const TypingIndicator = ({ label = "Thinking" }: { label?: string }) => (
   <motion.div
     initial={{ opacity: 0, y: 6 }}
     animate={{ opacity: 1, y: 0 }}
@@ -12,7 +12,8 @@ const TypingIndicator = () => (
       <img src={logoAsset.url} alt="Bharat AI" className="h-5 w-5 object-contain" />
     </div>
     <div className="flex items-center gap-2">
-      <span className="text-sm text-muted-foreground">Thinking</span>
+      <span className="text-sm text-muted-foreground">{label}</span>
+
       <span className="flex items-center gap-1">
         {[0, 1, 2].map((i) => (
           <motion.span
