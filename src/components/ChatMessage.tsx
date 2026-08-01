@@ -2,7 +2,8 @@ import { memo, useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Copy, Check, Bot, User, Volume2, VolumeOff } from "lucide-react";
+import { Copy, Check, User, Volume2, VolumeOff } from "lucide-react";
+import logoAsset from "@/assets/bharat-ai-logo.png.asset.json";
 import { motion } from "framer-motion";
 import WhatsAppShare from "./WhatsAppShare";
 import TreatmentMatrix from "./TreatmentMatrix";
@@ -88,8 +89,8 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
       className={`flex gap-3 px-4 py-3 ${isUser ? "justify-end" : "justify-start"}`}
     >
       {!isUser && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 neon-border-orange flex items-center justify-center">
-          <Bot className="h-4 w-4 text-saffron" />
+        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 neon-border-orange flex items-center justify-center overflow-hidden">
+          <img src={logoAsset.url} alt="Bharat AI" className="h-5 w-5 object-contain" />
         </div>
       )}
 
