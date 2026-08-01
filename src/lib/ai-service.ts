@@ -5,7 +5,10 @@ export interface Message {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  /** Optional AI-generated image (data URL or https URL) */
+  imageUrl?: string;
 }
+
 
 export interface ChatSession {
   id: string;
