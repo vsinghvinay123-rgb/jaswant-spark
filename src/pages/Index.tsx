@@ -117,6 +117,29 @@ const Index = () => {
       );
 
       setIsLoading(true);
+      // Image generation intent → call the image backend instead of chat
+      if (isImageRequest(content)) {
+        setIsGeneratingImage(true);
+        try {
+          const prompt = extractImagePrompt(content);
+          const { imageUrl, error } = await generateImage(prompt);
+          const imgMsg: Message = {
+            id: generateId(),
+            role: "assistant",
+            content: imageUrl ? `🎨 **${prompt}**` : `⚠️ ${error ?? "Image generation failed."}`,
+            imageUrl,
+            timestamp: new Date(),
+          };
+          setSessions((prev) =>
+            prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, imgMsg] } : s))
+          );
+        } finally {
+          setIsGeneratingImage(false);
+          setIsLoading(false);
+        }
+        return;
+      }
+
       try {
         const allMessages = [...activeSession.messages, userMsg].filter((m) => m.id !== "welcome");
         const response = await sendMessage(allMessages, lang, profile?.landSize);
@@ -126,6 +149,7 @@ const Index = () => {
           prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, aiMsg] } : s))
         );
         if (ttsEnabled) speakText(response, lang);
+
       } catch {
         // Should not reach here since sendMessage now returns debug info
         const errMsg: Message = {
