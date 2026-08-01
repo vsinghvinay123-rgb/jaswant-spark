@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Bot } from "lucide-react";
+import logoAsset from "@/assets/bharat-ai-logo.png.asset.json";
 
 const TypingIndicator = () => (
   <motion.div
