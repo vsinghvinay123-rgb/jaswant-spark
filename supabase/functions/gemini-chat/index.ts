@@ -9,7 +9,7 @@ interface InMsg {
   content: string;
 }
 
-const MODEL = "gemini-2.0-flash";
+const MODEL = "gemini-flash-latest";
 const MAX_MESSAGES = 20;
 const MAX_CONTENT_CHARS = 4000;
 const MAX_LANG_CHARS = 16;
