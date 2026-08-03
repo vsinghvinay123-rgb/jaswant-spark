@@ -622,7 +622,38 @@ export async function sendMessage(
       body: { messages: trimmed, lang, cropContext, imageDataUrl },
     });
 
-    if (error) throw error;
+    if (error) {
+      // Read the backend's JSON error body (402 credits, 429 rate limit, etc.)
+      let status: number | undefined;
+      let backendError: string | undefined;
+      const ctx = (error as { context?: Response }).context;
+      if (ctx && typeof ctx.json === "function") {
+        status = ctx.status;
+        try {
+          const body = await ctx.clone().json();
+          backendError = body?.error;
+        } catch { /* ignore */ }
+      }
+      if (status === 402) {
+        const m: Record<string, string> = {
+          en: `⚠️ AI credits are exhausted. Please add credits to the Lovable workspace to continue chatting.`,
+          hi: `⚠️ AI क्रेडिट खत्म हो गए हैं। कृपया वर्कस्पेस में क्रेडिट जोड़ें।`,
+          hinglish: `⚠️ AI credits khatam ho gaye hain. Workspace mein credits add karein.`,
+          mar: `⚠️ AI credit खतम होग्या। वर्कस्पेस में credit जोड़ो।`,
+        };
+        return m[lang] || m.en;
+      }
+      if (status === 429) {
+        const m: Record<string, string> = {
+          en: `⚠️ Too many requests right now. Please wait a moment and try again.`,
+          hi: `⚠️ अभी बहुत ज़्यादा अनुरोध हैं। थोड़ी देर बाद कोशिश करें।`,
+          hinglish: `⚠️ Abhi bahut requests hain. Thodi der baad try karein.`,
+          mar: `⚠️ अबार घणी requests है। थोड़ी देर पछै कोशिश करो।`,
+        };
+        return m[lang] || m.en;
+      }
+      throw new Error(backendError || error.message);
+    }
     if (data?.error) throw new Error(data.error);
     const reply = (data?.reply as string | undefined)?.trim();
     if (!reply) throw new Error("Empty response from AI");
@@ -637,6 +668,7 @@ export async function sendMessage(
     };
     return errorMessages[lang] || errorMessages.en;
   }
+
 }
 
 
