@@ -161,54 +161,55 @@ Fasal Doctor Rules:
 
 ${safeCropContext ? `\nUser context: ${safeCropContext}` : ""}`;
 
-    // Build chat messages. If an image is attached, upgrade the LAST user message
-    // to multimodal content array so Gemini Vision can see the crop photo.
-    const chatMessages: Array<{ role: string; content: unknown }> = [
-      { role: "system", content: system },
-      ...validatedMessages,
-    ];
+    // Build Gemini "contents". If an image is attached, add inline_data to the last user turn.
+    const contents = validatedMessages.map((m) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }] as Array<Record<string, unknown>>,
+    }));
 
     if (safeImageDataUrl) {
-      // Find last user message and convert its content to a multimodal array
-      for (let i = chatMessages.length - 1; i >= 0; i--) {
-        if (chatMessages[i].role === "user") {
-          const textPart = chatMessages[i].content as string;
-          chatMessages[i].content = [
-            { type: "text", text: textPart },
-            { type: "image_url", image_url: { url: safeImageDataUrl } },
-          ];
-          break;
+      const match = safeImageDataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+      if (match) {
+        for (let i = contents.length - 1; i >= 0; i--) {
+          if (contents[i].role === "user") {
+            contents[i].parts.push({
+              inline_data: { mime_type: match[1], data: match[2] },
+            });
+            break;
+          }
         }
       }
     }
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Lovable-API-Key": apiKey,
-        "X-Lovable-AIG-SDK": "direct-fetch",
-        "Content-Type": "application/json",
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
+      {
+        method: "POST",
+        headers: {
+          "x-goog-api-key": apiKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: system }] },
+          contents,
+        }),
       },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: chatMessages,
-      }),
-    });
+    );
 
     if (!res.ok) {
       const errText = await res.text();
-      console.error("Lovable AI error", res.status, errText);
+      console.error("Gemini API error", res.status, errText);
       if (res.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit reached. Please try again shortly." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return new Response(
+          JSON.stringify({ error: "Gemini free-tier rate limit reached. Please try again in a minute." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
       }
-      if (res.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted. Please add credits to your Lovable workspace." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+      if (res.status === 400 || res.status === 403) {
+        return new Response(
+          JSON.stringify({ error: "Gemini API key invalid or not enabled. Please check your GEMINI_API_KEY." }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
       }
       return new Response(JSON.stringify({ error: "AI service error. Please try again." }), {
         status: 502,
@@ -217,11 +218,16 @@ ${safeCropContext ? `\nUser context: ${safeCropContext}` : ""}`;
     }
 
     const data = await res.json();
-    const reply = data?.choices?.[0]?.message?.content || "Sorry, no response generated.";
+    const reply =
+      (data?.candidates?.[0]?.content?.parts ?? [])
+        .map((p: { text?: string }) => p?.text ?? "")
+        .join("")
+        .trim() || "Sorry, no response generated.";
 
     return new Response(JSON.stringify({ reply }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
+
   } catch (err) {
     console.error("gemini-chat error", err);
     return new Response(JSON.stringify({ error: "Internal server error." }), {
