@@ -22,10 +22,10 @@ Deno.serve(async (req) => {
   try {
     // Public endpoint — no auth required so any visitor can use Fasal Doctor tools.
 
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
+    const apiKey = Deno.env.get("GEMINI_API_KEY");
     if (!apiKey) {
-      console.error("LOVABLE_API_KEY not configured");
-      return new Response(JSON.stringify({ error: "Service misconfigured." }), {
+      console.error("GEMINI_API_KEY not configured");
+      return new Response(JSON.stringify({ error: "Service misconfigured: GEMINI_API_KEY missing." }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
