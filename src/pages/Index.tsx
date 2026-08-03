@@ -23,7 +23,6 @@ import ProfileSetupModal from "@/components/ProfileSetupModal";
 import type { UserProfile } from "@/components/ProfileSetupModal";
 import ApiKeyModal from "@/components/ApiKeyModal";
 import { sendMessage, generateId, type Message, type ChatSession } from "@/lib/ai-service";
-import { isImageRequest, extractImagePrompt, generateImage } from "@/lib/image-service";
 
 import { speakText } from "@/lib/speech";
 import { UI_TEXT, LANG_OPTIONS, type Lang } from "@/lib/i18n";
@@ -67,7 +66,6 @@ const Index = () => {
 
   const [activeSessionId, setActiveSessionId] = useState<string>(sessions[0]?.id);
   const [isLoading, setIsLoading] = useState(false);
-  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [cropCalcOpen, setCropCalcOpen] = useState(false);
@@ -119,28 +117,6 @@ const Index = () => {
       );
 
       setIsLoading(true);
-      // Image generation intent → call the image backend instead of chat
-      if (isImageRequest(content)) {
-        setIsGeneratingImage(true);
-        try {
-          const prompt = extractImagePrompt(content);
-          const { imageUrl, error } = await generateImage(prompt);
-          const imgMsg: Message = {
-            id: generateId(),
-            role: "assistant",
-            content: imageUrl ? `🎨 **${prompt}**` : `⚠️ ${error ?? "Image generation failed."}`,
-            imageUrl,
-            timestamp: new Date(),
-          };
-          setSessions((prev) =>
-            prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, imgMsg] } : s))
-          );
-        } finally {
-          setIsGeneratingImage(false);
-          setIsLoading(false);
-        }
-        return;
-      }
 
       try {
         const allMessages = [...activeSession.messages, userMsg].filter((m) => m.id !== "welcome");
@@ -293,7 +269,7 @@ const Index = () => {
             <ChatMessage key={msg.id} message={msg} lang={lang} />
           ))}
           {(activeSession?.messages.length ?? 0) <= 1 && <FasalDoctorHighlight lang={lang} />}
-          {isLoading && <TypingIndicator label={isGeneratingImage ? "Generating image" : "Thinking"} />}
+          {isLoading && <TypingIndicator />}
         </div>
       </main>
 

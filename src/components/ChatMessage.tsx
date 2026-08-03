@@ -6,7 +6,6 @@ import { Copy, Check, User, Volume2, VolumeOff } from "lucide-react";
 import logoAsset from "@/assets/bharat-ai-logo.png.asset.json";
 import { motion } from "framer-motion";
 import WhatsAppShare from "./WhatsAppShare";
-import ChatImage from "./ChatImage";
 import TreatmentMatrix from "./TreatmentMatrix";
 
 import {
@@ -140,7 +139,6 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
               </ReactMarkdown>
             </div>
           )}
-          {message.imageUrl && <ChatImage url={message.imageUrl} alt={message.content.slice(0, 120) || "AI generated image"} />}
         </div>
 
 
