@@ -15,6 +15,14 @@ const MAX_CONTENT_CHARS = 4000;
 const MAX_LANG_CHARS = 16;
 const MAX_CROP_CONTEXT_CHARS = 1000;
 
+// Verification helper: infers the length mode the model is expected to follow.
+export function detectLengthMode(text: string): "short" | "long" | "default" {
+  const t = (text || "").toLowerCase();
+  if (/\b(short|brief|quick|summary|tldr|one line|1 line)\b|chhota|chota|sankshep|jaldi|ek line|संक्षेप|छोटा/.test(t)) return "short";
+  if (/\b(long|detailed|detail|deep|elaborate|step by step|step-by-step|complete guide|explain)\b|vistar|detail me|poora|विस्तार|विस्तृत/.test(t)) return "long";
+  return "default";
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
