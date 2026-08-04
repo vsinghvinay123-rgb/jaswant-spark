@@ -639,7 +639,7 @@ export async function sendMessage(
           backendError = body?.error;
         } catch { /* ignore */ }
       }
-      if (status === 402) {
+      if (status === 402 || status === 429) {
         const m: Record<string, string> = {
           en: `⚠️ AI credits are exhausted. Please add credits to the Lovable workspace to continue chatting.`,
           hi: `⚠️ AI क्रेडिट खत्म हो गए हैं। कृपया वर्कस्पेस में क्रेडिट जोड़ें।`,
