@@ -593,6 +593,11 @@ function getCropAdvice(crop: string, age: number, lang: Lang): string {
 
 import { supabase } from "@/integrations/supabase/client";
 
+/** Friendly offline knowledge fallback — never show technical errors to the user. */
+export const OFFLINE_FALLBACK =
+  "Network ya server connection abhi uplabdh nahi hai. Meri offline jankari ke hisaab se: Kripya apni fasal ko saaf rakhein aur emergency ke liye nazdeeki Krishi Kendra (KVK) se sampark karein.";
+
+
 export async function sendMessage(
   messages: Message[],
   lang: Lang,
