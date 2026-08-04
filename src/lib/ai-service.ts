@@ -593,6 +593,11 @@ function getCropAdvice(crop: string, age: number, lang: Lang): string {
 
 import { supabase } from "@/integrations/supabase/client";
 
+/** Friendly offline knowledge fallback — never show technical errors to the user. */
+export const OFFLINE_FALLBACK =
+  "Network ya server connection abhi uplabdh nahi hai. Meri offline jankari ke hisaab se: Kripya apni fasal ko saaf rakhein aur emergency ke liye nazdeeki Krishi Kendra (KVK) se sampark karein.";
+
+
 export async function sendMessage(
   messages: Message[],
   lang: Lang,
@@ -634,24 +639,10 @@ export async function sendMessage(
           backendError = body?.error;
         } catch { /* ignore */ }
       }
-      if (status === 402) {
-        const m: Record<string, string> = {
-          en: `⚠️ AI credits are exhausted. Please add credits to the Lovable workspace to continue chatting.`,
-          hi: `⚠️ AI क्रेडिट खत्म हो गए हैं। कृपया वर्कस्पेस में क्रेडिट जोड़ें।`,
-          hinglish: `⚠️ AI credits khatam ho gaye hain. Workspace mein credits add karein.`,
-          mar: `⚠️ AI credit खतम होग्या। वर्कस्पेस में credit जोड़ो।`,
-        };
-        return m[lang] || m.en;
+      if (status === 402 || status === 429) {
+        return OFFLINE_FALLBACK;
       }
-      if (status === 429) {
-        const m: Record<string, string> = {
-          en: `⚠️ Too many requests right now. Please wait a moment and try again.`,
-          hi: `⚠️ अभी बहुत ज़्यादा अनुरोध हैं। थोड़ी देर बाद कोशिश करें।`,
-          hinglish: `⚠️ Abhi bahut requests hain. Thodi der baad try karein.`,
-          mar: `⚠️ अबार घणी requests है। थोड़ी देर पछै कोशिश करो।`,
-        };
-        return m[lang] || m.en;
-      }
+
       throw new Error(backendError || error.message);
     }
     if (data?.error) throw new Error(data.error);
@@ -660,14 +651,9 @@ export async function sendMessage(
     return reply;
   } catch (err) {
     console.error("Gemini chat failed", err);
-    const errorMessages: Record<string, string> = {
-      en: `⚠️ Sorry, I couldn't reach the AI right now. Please check your connection and try again.`,
-      hi: `⚠️ माफ़ करें, AI से कनेक्ट नहीं हो पाया। कृपया दोबारा कोशिश करें।`,
-      hinglish: `⚠️ Sorry, AI se connect nahi ho paya. Thodi der baad try karein.`,
-      mar: `⚠️ माफी, AI सूं कनेक्ट कोनी हुयो। फेर कोशिश करो।`,
-    };
-    return errorMessages[lang] || errorMessages.en;
+    return OFFLINE_FALLBACK;
   }
+
 
 }
 

@@ -93,7 +93,7 @@ export function speakText(text: string, lang: Lang) {
     chunks.forEach((chunk) => {
       const u = new SpeechSynthesisUtterance(chunk);
       u.lang = voiceLang;
-      u.rate = 1;
+      u.rate = 1.15;
       u.pitch = 1;
       u.volume = 1;
       if (voice) u.voice = voice;
