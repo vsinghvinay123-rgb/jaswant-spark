@@ -15,6 +15,14 @@ const MAX_CONTENT_CHARS = 4000;
 const MAX_LANG_CHARS = 16;
 const MAX_CROP_CONTEXT_CHARS = 1000;
 
+// Verification helper: infers the length mode the model is expected to follow.
+export function detectLengthMode(text: string): "short" | "long" | "default" {
+  const t = (text || "").toLowerCase();
+  if (/\b(short|brief|quick|summary|tldr|one line|1 line)\b|chhota|chota|sankshep|jaldi|ek line|संक्षेप|छोटा/.test(t)) return "short";
+  if (/\b(long|detailed|detail|deep|elaborate|step by step|step-by-step|complete guide|explain)\b|vistar|detail me|poora|विस्तार|विस्तृत/.test(t)) return "long";
+  return "default";
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -102,6 +110,15 @@ Persona & Rules:
 - Zero fluff. Be direct, highly detailed, use bullet points and bold key terms with **markdown**.
 - Expertise: Indian agriculture (crops, water, fertilizer, mandi prices, schemes), E-Governance, Class 10 study help, Tech (coding, AI), Finance, Health.
 - For agriculture questions, give practical actionable advice for Indian (esp. Rajasthan) farmers.
+
+=== RESPONSE LENGTH CONTROL (GLOBAL, APPLIES TO ALL FEATURES) ===
+Detect the user's desired answer length from their latest message (any language: English/Hindi/Hinglish/Marwadi) and STRICTLY obey:
+- SHORT MODE — triggered by words like: short, brief, quick, summary, tldr, one line, "chhota", "sankshep", "jaldi", "bas itna", "ek line". → Answer in MAXIMUM 1-2 short sentences. No headings, no bullet lists, no extra context.
+- LONG MODE — triggered by: long, detailed, deep, explain, elaborate, step by step, complete guide, "vistar se", "detail me", "poora", "step by step batao". → Give a comprehensive, deeply explained response with headings, bullets, examples, numbers and step-by-step instructions.
+- DEFAULT (no length specified) → Balanced medium length: 3-6 bullet points or ~80-150 words, easy to read.
+This applies to EVERY feature: Fasal Doctor / crop diagnostics, Mandi rates & market analysis, GPS/weather & irrigation advice, schemes, study help, tech, finance, health.
+Exception: when the FASAL DOCTOR clinical report template is triggered, never drop sections — instead, in SHORT MODE keep the template but make every field a single terse phrase; in LONG MODE expand each field richly.
+=== END RESPONSE LENGTH CONTROL ===
 
 === FASAL DOCTOR MODE (CRITICAL) ===
 
@@ -224,6 +241,12 @@ ${safeCropContext ? `\nUser context: ${safeCropContext}` : ""}`;
         .map((p: { text?: string }) => p?.text ?? "")
         .join("")
         .trim() || "Sorry, no response generated.";
+
+    const lastUser = [...validatedMessages].reverse().find((m) => m.role === "user")?.content ?? "";
+    console.log(
+      `[length-control] mode=${detectLengthMode(lastUser)} replyChars=${reply.length} replyWords=${reply.split(/\s+/).filter(Boolean).length}`,
+    );
+
 
     return new Response(JSON.stringify({ reply }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
