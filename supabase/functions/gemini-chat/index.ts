@@ -242,6 +242,12 @@ ${safeCropContext ? `\nUser context: ${safeCropContext}` : ""}`;
         .join("")
         .trim() || "Sorry, no response generated.";
 
+    const lastUser = [...validatedMessages].reverse().find((m) => m.role === "user")?.content ?? "";
+    console.log(
+      `[length-control] mode=${detectLengthMode(lastUser)} replyChars=${reply.length} replyWords=${reply.split(/\s+/).filter(Boolean).length}`,
+    );
+
+
     return new Response(JSON.stringify({ reply }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
