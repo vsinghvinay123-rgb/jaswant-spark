@@ -10,6 +10,7 @@ interface InMsg {
 }
 
 const MODEL = "gemini-flash-latest";
+const GROQ_MODEL = "llama-3.3-70b-versatile";
 const MAX_MESSAGES = 20;
 const MAX_CONTENT_CHARS = 4000;
 const MAX_LANG_CHARS = 16;
