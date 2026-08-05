@@ -58,6 +58,10 @@ const isFasalDoctorResponse = (content: string) =>
 const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
   const isUser = message.role === "user";
   const isDiagnostic = !!message.isDiagnosticScan;
+  const cleanContent = message.content
+    .replace(/<THINKING>[\s\S]*?<\/THINKING>/gi, "")
+    .replace(/\[(CROP_REPORT|INVALID_CROP)\]/g, "")
+    .trim();
   const showInvalid = !isUser && isDiagnostic && isInvalidCropResponse(message.content);
   const showClinical = !isUser && isDiagnostic && isCropReportResponse(message.content);
   const showWhatsApp =
@@ -137,7 +141,7 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
                   td({ children }) { return <td className="border border-border px-3 py-1.5">{children}</td>; },
                 }}
               >
-                {message.content}
+                {cleanContent}
               </ReactMarkdown>
             </div>
           )}
