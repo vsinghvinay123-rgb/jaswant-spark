@@ -23,6 +23,22 @@ export function detectLengthMode(text: string): "short" | "long" | "default" {
   return "default";
 }
 
+// Splits a comma/newline/space separated secret into a clean key array.
+export function parseKeys(multi?: string | null, single?: string | null): string[] {
+  const raw = [multi ?? "", single ?? ""].join(",");
+  const seen = new Set<string>();
+  return raw
+    .split(/[,\n\r\s]+/)
+    .map((k) => k.trim())
+    .filter((k) => k.length > 10 && !seen.has(k) && seen.add(k));
+}
+
+function isQuotaError(status: number, body: string): boolean {
+  return status === 429 || status === 403 || /quota|rate.?limit|exhaust|exceed/i.test(body);
+}
+
+
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
