@@ -22,7 +22,7 @@ import logoAsset from "@/assets/bharat-ai-logo.png.asset.json";
 import ProfileSetupModal from "@/components/ProfileSetupModal";
 import type { UserProfile } from "@/components/ProfileSetupModal";
 import ApiKeyModal from "@/components/ApiKeyModal";
-import { sendMessage, generateId, type Message, type ChatSession } from "@/lib/ai-service";
+import { sendMessage, generateId, isDiagnosticQuery, type Message, type ChatSession } from "@/lib/ai-service";
 
 import { speakText } from "@/lib/speech";
 import { UI_TEXT, LANG_OPTIONS, type Lang } from "@/lib/i18n";
@@ -103,7 +103,8 @@ const Index = () => {
   const handleSend = useCallback(
     async (content: string) => {
       if (!activeSession) return;
-      const userMsg: Message = { id: generateId(), role: "user", content, timestamp: new Date() };
+      const diagnostic = isDiagnosticQuery(content);
+      const userMsg: Message = { id: generateId(), role: "user", content, timestamp: new Date(), isDiagnosticScan: diagnostic };
 
       setSessions((prev) =>
         prev.map((s) => {
@@ -121,7 +122,7 @@ const Index = () => {
       try {
         const allMessages = [...activeSession.messages, userMsg].filter((m) => m.id !== "welcome");
         const response = await sendMessage(allMessages, lang, profile?.landSize);
-        const aiMsg: Message = { id: generateId(), role: "assistant", content: response, timestamp: new Date() };
+        const aiMsg: Message = { id: generateId(), role: "assistant", content: response, timestamp: new Date(), isDiagnosticScan: diagnostic };
 
         setSessions((prev) =>
           prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, aiMsg] } : s))
@@ -309,6 +310,7 @@ I am uploading a photo of my crop / leaf. **Act as an ICAR-certified Fasal Docto
                 role: "user",
                 content: `📷 [Crop photo uploaded for Fasal Doctor analysis]`,
                 timestamp: new Date(),
+                isDiagnosticScan: true,
               };
               // add user message
               setSessions((prev) =>
@@ -320,7 +322,7 @@ I am uploading a photo of my crop / leaf. **Act as an ICAR-certified Fasal Docto
                 // Replace last user content with the detailed vision prompt (so the model receives full instructions alongside the image)
                 const forAi = history.slice(0, -1).concat([{ ...userMsg, content: visionPrompt }]);
                 const response = await sendMessage(forAi, lang, profile?.landSize, dataUrl);
-                const aiMsg: Message = { id: generateId(), role: "assistant", content: response, timestamp: new Date() };
+                const aiMsg: Message = { id: generateId(), role: "assistant", content: response, timestamp: new Date(), isDiagnosticScan: true };
                 setSessions((prev) =>
                   prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, aiMsg] } : s))
                 );
