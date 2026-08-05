@@ -57,12 +57,14 @@ const isFasalDoctorResponse = (content: string) =>
 
 const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
   const isUser = message.role === "user";
-  const showInvalid = !isUser && isInvalidCropResponse(message.content);
-  const showClinical = !isUser && isCropReportResponse(message.content);
+  const isDiagnostic = !!message.isDiagnosticScan;
+  const showInvalid = !isUser && isDiagnostic && isInvalidCropResponse(message.content);
+  const showClinical = !isUser && isDiagnostic && isCropReportResponse(message.content);
   const showWhatsApp =
     !isUser && message.id !== "welcome" && (showClinical || isDetailedResponse(message.content));
   const showPrescription =
-    !isUser && !showClinical && !showInvalid && isFasalDoctorResponse(message.content);
+    !isUser && isDiagnostic && !showClinical && !showInvalid && isFasalDoctorResponse(message.content);
+
 
   const [isSpeaking, setIsSpeaking] = useState(false);
 
