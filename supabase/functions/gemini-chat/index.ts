@@ -31,11 +31,13 @@ Deno.serve(async (req) => {
   try {
     // Public endpoint — no auth required so any visitor can use Fasal Doctor tools.
 
-    const apiKey = Deno.env.get("GEMINI_API_KEY");
-    if (!apiKey) {
-      console.error("GEMINI_API_KEY not configured");
-      return new Response(JSON.stringify({ error: "Service misconfigured: GEMINI_API_KEY missing." }), {
-        status: 500,
+    const geminiKeys = parseKeys(Deno.env.get("GEMINI_API_KEYS"), Deno.env.get("GEMINI_API_KEY"));
+    const groqKeys = parseKeys(Deno.env.get("GROQ_API_KEYS"), Deno.env.get("GROQ_API_KEY"));
+
+    if (geminiKeys.length === 0 && groqKeys.length === 0) {
+      console.error("No API keys configured (GEMINI_API_KEYS / GROQ_API_KEYS)");
+      return new Response(JSON.stringify({ error: "Service misconfigured: no API keys." }), {
+        status: 503,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
