@@ -10,6 +10,7 @@ interface InMsg {
 }
 
 const MODEL = "gemini-flash-latest";
+const GROQ_MODEL = "llama-3.3-70b-versatile";
 const MAX_MESSAGES = 20;
 const MAX_CONTENT_CHARS = 4000;
 const MAX_LANG_CHARS = 16;
@@ -23,6 +24,22 @@ export function detectLengthMode(text: string): "short" | "long" | "default" {
   return "default";
 }
 
+// Splits a comma/newline/space separated secret into a clean key array.
+export function parseKeys(multi?: string | null, single?: string | null): string[] {
+  const raw = [multi ?? "", single ?? ""].join(",");
+  const seen = new Set<string>();
+  return raw
+    .split(/[,\n\r\s]+/)
+    .map((k) => k.trim())
+    .filter((k) => k.length > 10 && !seen.has(k) && seen.add(k));
+}
+
+function isQuotaError(status: number, body: string): boolean {
+  return status === 429 || status === 403 || /quota|rate.?limit|exhaust|exceed/i.test(body);
+}
+
+
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -31,11 +48,13 @@ Deno.serve(async (req) => {
   try {
     // Public endpoint — no auth required so any visitor can use Fasal Doctor tools.
 
-    const apiKey = Deno.env.get("GEMINI_API_KEY");
-    if (!apiKey) {
-      console.error("GEMINI_API_KEY not configured");
-      return new Response(JSON.stringify({ error: "Service misconfigured: GEMINI_API_KEY missing." }), {
-        status: 500,
+    const geminiKeys = parseKeys(Deno.env.get("GEMINI_API_KEYS"), Deno.env.get("GEMINI_API_KEY"));
+    const groqKeys = parseKeys(Deno.env.get("GROQ_API_KEYS"), Deno.env.get("GROQ_API_KEY"));
+
+    if (geminiKeys.length === 0 && groqKeys.length === 0) {
+      console.error("No API keys configured (GEMINI_API_KEYS / GROQ_API_KEYS)");
+      return new Response(JSON.stringify({ error: "Service misconfigured: no API keys." }), {
+        status: 503,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -199,58 +218,96 @@ ${safeCropContext ? `\nUser context: ${safeCropContext}` : ""}`;
       }
     }
 
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
-      {
-        method: "POST",
-        headers: {
-          "x-goog-api-key": apiKey,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: system }] },
-          contents,
-        }),
-      },
-    );
+    let reply: string | null = null;
+    let lastStatus = 0;
+    let lastErr = "";
 
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error("Gemini API error", res.status, errText);
-      if (res.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Gemini free-tier rate limit reached. Please try again in a minute." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    // --- 1. Rotate through all Gemini keys ---
+    for (const [i, key] of geminiKeys.entries()) {
+      try {
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
+          {
+            method: "POST",
+            headers: { "x-goog-api-key": key, "Content-Type": "application/json" },
+            body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents }),
+          },
         );
+
+        if (res.ok) {
+          const data = await res.json();
+          reply =
+            (data?.candidates?.[0]?.content?.parts ?? [])
+              .map((p: { text?: string }) => p?.text ?? "")
+              .join("")
+              .trim() || null;
+          if (reply) {
+            console.log(`[key-rotation] success provider=gemini keyIndex=${i}`);
+            break;
+          }
+        } else {
+          lastStatus = res.status;
+          lastErr = await res.text();
+          console.error(`[key-rotation] gemini key #${i} failed status=${res.status}`);
+          if (!isQuotaError(res.status, lastErr)) break; // non-quota error: keys won't help
+        }
+      } catch (e) {
+        lastErr = String(e);
+        console.error(`[key-rotation] gemini key #${i} network error`);
       }
-      if (res.status === 400 || res.status === 403) {
-        return new Response(
-          JSON.stringify({ error: "Gemini API key invalid or not enabled. Please check your GEMINI_API_KEY." }),
-          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-        );
-      }
-      return new Response(JSON.stringify({ error: "AI service error. Please try again." }), {
-        status: 502,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
     }
 
-    const data = await res.json();
-    const reply =
-      (data?.candidates?.[0]?.content?.parts ?? [])
-        .map((p: { text?: string }) => p?.text ?? "")
-        .join("")
-        .trim() || "Sorry, no response generated.";
+    // --- 2. Fallback: rotate through Groq keys (text-only) ---
+    if (!reply && groqKeys.length > 0) {
+      const groqMessages = [
+        { role: "system", content: system },
+        ...validatedMessages.map((m) => ({ role: m.role, content: m.content })),
+      ];
+      for (const [i, key] of groqKeys.entries()) {
+        try {
+          const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ model: GROQ_MODEL, messages: groqMessages }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            reply = (data?.choices?.[0]?.message?.content ?? "").trim() || null;
+            if (reply) {
+              console.log(`[key-rotation] success provider=groq keyIndex=${i}`);
+              break;
+            }
+          } else {
+            lastStatus = res.status;
+            lastErr = await res.text();
+            console.error(`[key-rotation] groq key #${i} failed status=${res.status}`);
+            if (!isQuotaError(res.status, lastErr)) continue;
+          }
+        } catch (e) {
+          lastErr = String(e);
+          console.error(`[key-rotation] groq key #${i} network error`);
+        }
+      }
+    }
+
+    // --- 3. Ultimate fallback: all keys exhausted → client offline knowledge ---
+    if (!reply) {
+      console.error(`[key-rotation] all keys exhausted lastStatus=${lastStatus}`);
+      return new Response(
+        JSON.stringify({ error: "All AI keys exhausted or unavailable.", fallback: true }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
 
     const lastUser = [...validatedMessages].reverse().find((m) => m.role === "user")?.content ?? "";
     console.log(
       `[length-control] mode=${detectLengthMode(lastUser)} replyChars=${reply.length} replyWords=${reply.split(/\s+/).filter(Boolean).length}`,
     );
 
-
     return new Response(JSON.stringify({ reply }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
+
 
   } catch (err) {
     console.error("gemini-chat error", err);
