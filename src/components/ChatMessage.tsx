@@ -57,12 +57,18 @@ const isFasalDoctorResponse = (content: string) =>
 
 const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
   const isUser = message.role === "user";
-  const showInvalid = !isUser && isInvalidCropResponse(message.content);
-  const showClinical = !isUser && isCropReportResponse(message.content);
+  const isDiagnostic = !!message.isDiagnosticScan;
+  const cleanContent = message.content
+    .replace(/<THINKING>[\s\S]*?<\/THINKING>/gi, "")
+    .replace(/\[(CROP_REPORT|INVALID_CROP)\]/g, "")
+    .trim();
+  const showInvalid = !isUser && isDiagnostic && isInvalidCropResponse(message.content);
+  const showClinical = !isUser && isDiagnostic && isCropReportResponse(message.content);
   const showWhatsApp =
     !isUser && message.id !== "welcome" && (showClinical || isDetailedResponse(message.content));
   const showPrescription =
-    !isUser && !showClinical && !showInvalid && isFasalDoctorResponse(message.content);
+    !isUser && isDiagnostic && !showClinical && !showInvalid && isFasalDoctorResponse(message.content);
+
 
   const [isSpeaking, setIsSpeaking] = useState(false);
 
@@ -135,7 +141,7 @@ const ChatMessage = memo(({ message, lang }: ChatMessageProps) => {
                   td({ children }) { return <td className="border border-border px-3 py-1.5">{children}</td>; },
                 }}
               >
-                {message.content}
+                {cleanContent}
               </ReactMarkdown>
             </div>
           )}
