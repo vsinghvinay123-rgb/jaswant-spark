@@ -5,7 +5,19 @@ export interface Message {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  /** true only for crop-photo scans or explicit disease diagnosis requests */
+  isDiagnosticScan?: boolean;
 }
+
+/** Detects an explicit crop disease / diagnosis request in the user's text */
+export function isDiagnosticQuery(text: string): boolean {
+  const t = text.toLowerCase();
+  // exclude greetings / mandi / weather style queries
+  if (/^\s*(hi|hello|hey|namaste|hii+|yo|good (morning|evening|afternoon))\b/.test(t)) return false;
+  if (/mandi|bhav|rate|price|msp|weather|mausam|barish|forecast|temperature/.test(t)) return false;
+  return /(disease|bimari|bimaari|rog|pest|keeda|keet|fungus|fungal|blight|rust|infection|infect|yellow(ing)? leaf|patte? (peele|pila|yellow)|leaf spot|wilt|diagnos|fasal doctor|crop doctor|ilaj|treatment|spray|dawai|davai|फसल डॉक्टर|बीमारी|रोग|कीट|इलाज|फफूंद)/.test(t);
+}
+
 
 
 export interface ChatSession {
