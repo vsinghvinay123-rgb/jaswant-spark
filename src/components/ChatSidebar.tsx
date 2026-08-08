@@ -1,7 +1,9 @@
-import { Plus, MessageSquare, Trash2, PanelLeftClose } from "lucide-react";
+import { Plus, MessageSquare, Trash2, PanelLeftClose, Gift } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import type { ChatSession } from "@/lib/ai-service";
 import { UI_TEXT, type Lang } from "@/lib/i18n";
+
 
 interface ChatSidebarProps {
   sessions: ChatSession[];
