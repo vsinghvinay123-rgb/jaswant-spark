@@ -1,7 +1,9 @@
-import { Plus, MessageSquare, Trash2, PanelLeftClose } from "lucide-react";
+import { Plus, MessageSquare, Trash2, PanelLeftClose, Gift } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import type { ChatSession } from "@/lib/ai-service";
 import { UI_TEXT, type Lang } from "@/lib/i18n";
+
 
 interface ChatSidebarProps {
   sessions: ChatSession[];
@@ -72,7 +74,22 @@ const ChatSidebar = ({ sessions, activeId, onSelect, onNew, onDelete, open, onCl
             ))}
           </div>
 
-          <div className="p-4 border-t border-border">
+          <div className="p-4 border-t border-border space-y-3">
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="w-full justify-start border-primary/25 bg-primary/5 text-primary hover:bg-primary/10"
+            >
+              <a
+                href="https://omg10.com/4/11532972"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Gift className="h-4 w-4" />
+                Support Developer
+              </a>
+            </Button>
             <p className="text-[10px] text-muted-foreground text-center">
               🇮🇳 <span className="text-saffron font-semibold">{t.poweredBy}</span>
             </p>
