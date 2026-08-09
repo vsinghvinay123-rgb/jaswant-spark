@@ -5,7 +5,7 @@ import SMSAlertModal from "./SMSAlertModal";
 import type { Lang } from "@/lib/i18n";
 
 interface FloatingControlPanelProps {
-  onSend: (text: string) => void;              // triggers the full user→AI chat flow
+  onSend: (text: string, source?: "mandi" | "weather") => void; // triggers the full user→AI chat flow
   onImageAnalyze: (dataUrl: string) => void;   // sends photo to Gemini Vision via AI flow
   onVoiceResult: (text: string) => void;       // transcribed speech (auto-submits)
   onLocationDetect: (msg: string) => void;     // fallback status text (errors, no-permission)
