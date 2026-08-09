@@ -5,7 +5,7 @@ import SMSAlertModal from "./SMSAlertModal";
 import type { Lang } from "@/lib/i18n";
 
 interface FloatingControlPanelProps {
-  onSend: (text: string) => void;              // triggers the full user→AI chat flow
+  onSend: (text: string, source?: "mandi" | "weather") => void; // triggers the full user→AI chat flow
   onImageAnalyze: (dataUrl: string) => void;   // sends photo to Gemini Vision via AI flow
   onVoiceResult: (text: string) => void;       // transcribed speech (auto-submits)
   onLocationDetect: (msg: string) => void;     // fallback status text (errors, no-permission)
@@ -118,7 +118,7 @@ ${dailyLines}
 4. **Pest / disease risk** to watch based on humidity & temperature.
 5. Any urgent 24-hour action (spraying, harvesting, covering).`;
 
-          onSend(prompt);
+          onSend(prompt, "weather");
         } catch (e) {
           console.error(e);
           onLocationDetect(t.weatherFail);
@@ -136,7 +136,7 @@ ${dailyLines}
 
   // ================= MANDI prompt =================
   const handleMandi = () => {
-    onSend(t.mandiPrompt);
+    onSend(t.mandiPrompt, "mandi");
   };
 
   // ================= SCAN → Gemini Vision =================

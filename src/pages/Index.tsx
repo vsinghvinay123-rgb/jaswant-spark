@@ -24,6 +24,8 @@ import type { UserProfile } from "@/components/ProfileSetupModal";
 import ApiKeyModal from "@/components/ApiKeyModal";
 import { sendMessage, generateId, isDiagnosticQuery, type Message, type ChatSession } from "@/lib/ai-service";
 
+import { triggerSponsorAd, type AdEvent } from "@/lib/ad-monetization";
+
 import { speakText } from "@/lib/speech";
 import { UI_TEXT, LANG_OPTIONS, type Lang } from "@/lib/i18n";
 
@@ -101,7 +103,7 @@ const Index = () => {
   }, []);
 
   const handleSend = useCallback(
-    async (content: string) => {
+    async (content: string, adEvent?: AdEvent) => {
       if (!activeSession) return;
       const diagnostic = isDiagnosticQuery(content);
       const userMsg: Message = { id: generateId(), role: "user", content, timestamp: new Date(), isDiagnosticScan: diagnostic };
@@ -129,6 +131,10 @@ const Index = () => {
         );
         if (ttsEnabled) speakText(response, lang);
 
+        // Monetization: only for premium feature results (never voice)
+        const evt = adEvent ?? (diagnostic ? "diagnostic" : undefined);
+        if (evt) triggerSponsorAd(evt);
+
       } catch {
         // Should not reach here since sendMessage now returns debug info
         const errMsg: Message = {
@@ -145,6 +151,7 @@ const Index = () => {
     },
     [activeSession, activeSessionId, lang, ttsEnabled, profile]
   );
+
 
 
   const handleNewChat = () => {
@@ -277,13 +284,14 @@ const Index = () => {
       {/* Bottom controls */}
       <div className="relative z-10 space-y-2 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2">
         <div className="max-w-3xl mx-auto px-4">
-          <SuggestionChips onSelect={handleSend} lang={lang} />
+          <SuggestionChips onSelect={(text) => handleSend(text)} lang={lang} />
         </div>
         <div className="max-w-3xl mx-auto px-4 flex justify-center">
           <FloatingControlPanel
             lang={lang}
-            onSend={(text) => handleSend(text)}
+            onSend={(text, source) => { void handleSend(text, source as AdEvent | undefined); }}
             onVoiceResult={(text) => handleSend(text)}
+
             onLocationDetect={(msg) => {
               const aiMsg: Message = { id: generateId(), role: "assistant", content: msg, timestamp: new Date() };
               setSessions((prev) => prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, aiMsg] } : s)));
@@ -327,6 +335,7 @@ I am uploading a photo of my crop / leaf. **Act as an ICAR-certified Fasal Docto
                   prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, aiMsg] } : s))
                 );
                 if (ttsEnabled) speakText(response, lang);
+                triggerSponsorAd("diagnostic");
               } catch {
                 const errMsg: Message = { id: generateId(), role: "assistant", content: "⚠️ Image analysis failed. Please try again.", timestamp: new Date() };
                 setSessions((prev) => prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, errMsg] } : s)));
