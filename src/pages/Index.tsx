@@ -335,6 +335,7 @@ I am uploading a photo of my crop / leaf. **Act as an ICAR-certified Fasal Docto
                   prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, aiMsg] } : s))
                 );
                 if (ttsEnabled) speakText(response, lang);
+                triggerSponsorAd("diagnostic");
               } catch {
                 const errMsg: Message = { id: generateId(), role: "assistant", content: "⚠️ Image analysis failed. Please try again.", timestamp: new Date() };
                 setSessions((prev) => prev.map((s) => (s.id === activeSessionId ? { ...s, messages: [...s.messages, errMsg] } : s)));
