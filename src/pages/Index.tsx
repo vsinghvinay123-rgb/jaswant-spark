@@ -24,6 +24,8 @@ import type { UserProfile } from "@/components/ProfileSetupModal";
 import ApiKeyModal from "@/components/ApiKeyModal";
 import { sendMessage, generateId, isDiagnosticQuery, type Message, type ChatSession } from "@/lib/ai-service";
 
+import { triggerSponsorAd, type AdEvent } from "@/lib/ad-monetization";
+
 import { speakText } from "@/lib/speech";
 import { UI_TEXT, LANG_OPTIONS, type Lang } from "@/lib/i18n";
 
