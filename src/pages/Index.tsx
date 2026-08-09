@@ -101,7 +101,7 @@ const Index = () => {
   }, []);
 
   const handleSend = useCallback(
-    async (content: string) => {
+    async (content: string, adEvent?: AdEvent) => {
       if (!activeSession) return;
       const diagnostic = isDiagnosticQuery(content);
       const userMsg: Message = { id: generateId(), role: "user", content, timestamp: new Date(), isDiagnosticScan: diagnostic };
@@ -129,6 +129,10 @@ const Index = () => {
         );
         if (ttsEnabled) speakText(response, lang);
 
+        // Monetization: only for premium feature results (never voice)
+        const evt = adEvent ?? (diagnostic ? "diagnostic" : undefined);
+        if (evt) triggerSponsorAd(evt);
+
       } catch {
         // Should not reach here since sendMessage now returns debug info
         const errMsg: Message = {
@@ -145,6 +149,7 @@ const Index = () => {
     },
     [activeSession, activeSessionId, lang, ttsEnabled, profile]
   );
+
 
 
   const handleNewChat = () => {
