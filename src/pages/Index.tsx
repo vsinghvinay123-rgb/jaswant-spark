@@ -289,7 +289,7 @@ const Index = () => {
         <div className="max-w-3xl mx-auto px-4 flex justify-center">
           <FloatingControlPanel
             lang={lang}
-            onSend={(text, source) => handleSend(text, source)}
+            onSend={(text, source) => { void handleSend(text, source as AdEvent | undefined); }}
             onVoiceResult={(text) => handleSend(text)}
 
             onLocationDetect={(msg) => {
