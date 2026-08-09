@@ -281,8 +281,8 @@ const Index = () => {
         </div>
       </main>
 
-      {/* Bottom controls */}
-      <div className="relative z-10 space-y-2 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2">
+      {/* Bottom controls; reserve space for the fixed ad banner */}
+      <div className="relative z-10 space-y-2 pb-[calc(4.5rem+env(safe-area-inset-bottom))] pt-2">
         <div className="max-w-3xl mx-auto px-4">
           <SuggestionChips onSelect={(text) => handleSend(text)} lang={lang} />
         </div>

@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import CookieBanner from "@/components/CookieBanner";
+import StickyMonetagBanner from "@/components/StickyMonetagBanner";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import AgriWiki from "./pages/AgriWiki.tsx";
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
         <CookieBanner />
+        <StickyMonetagBanner />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
