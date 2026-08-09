@@ -118,7 +118,7 @@ ${dailyLines}
 4. **Pest / disease risk** to watch based on humidity & temperature.
 5. Any urgent 24-hour action (spraying, harvesting, covering).`;
 
-          onSend(prompt);
+          onSend(prompt, "weather");
         } catch (e) {
           console.error(e);
           onLocationDetect(t.weatherFail);
@@ -136,7 +136,7 @@ ${dailyLines}
 
   // ================= MANDI prompt =================
   const handleMandi = () => {
-    onSend(t.mandiPrompt);
+    onSend(t.mandiPrompt, "mandi");
   };
 
   // ================= SCAN → Gemini Vision =================
